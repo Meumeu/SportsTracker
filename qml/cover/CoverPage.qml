@@ -43,8 +43,8 @@ CoverBackground {
         text: (workout.status == Workout.Tracking || workout.status == Workout.Paused) ?
                   qsTr("%1\n%2 km\n%3 km/h")
                     .arg(Util.timeToString(workout.duration))
-                    .arg(workout.distance.toLocaleString(Qt.locale() , "f", 2))
-                    .arg(workout.speed.toLocaleString(Qt.locale() , "f", 1)) :
+                    .arg((workout.distance / 1000).toLocaleString(Qt.locale() , "f", 2))
+                    .arg((workout.speed * 3.6).toLocaleString(Qt.locale() , "f", 1)) :
                   ""
     }
 
@@ -55,11 +55,6 @@ CoverBackground {
         CoverAction {
             iconSource: "image://theme/icon-camera-stop"
             onTriggered: stopWorkout()
-                /*{
-                workout.status = Workout.Stopped;
-                window.activate();
-                if (pageStack.depth == 1) pageStack.navigateForward();
-            }*/
         }
 
         CoverAction {

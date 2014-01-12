@@ -12,7 +12,9 @@ CONFIG += sailfishapp c++11
 
 SOURCES += src/SportsTracker.cpp \
     src/workout.cpp \
-    src/gpx.cpp
+    src/gpx.cpp \
+    src/workoutsummary.cpp \
+    src/workoutsummarylist.cpp
 
 OTHER_FILES += qml/SportsTracker.qml \
     qml/cover/CoverPage.qml \
@@ -26,6 +28,8 @@ OTHER_FILES += qml/SportsTracker.qml \
 
 HEADERS += \
     src/workout.h \
-    src/gpx.h
+    src/gpx.h \
+    src/workoutsummary.h \
+    src/workoutsummarylist.h
 
 QT += positioning location xml

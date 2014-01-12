@@ -64,6 +64,7 @@ signals:
     void statusChanged(Status status);
     void lastPositionChanged(const QString& position);
     void durationChanged(double duration);
+    void saved(QString filename);
 
 public slots:
 };

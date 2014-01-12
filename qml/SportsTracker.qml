@@ -39,9 +39,16 @@ ApplicationWindow {
 
     Workout {
         id: workout
+        onSaved: WorkoutSummaryList.addWorkout(filename)
     }
 
-    cover: CoverPage { workout: workout; window: appWindow }
-    initialPage: Component { MainPage {} }
-    Component.onCompleted: pageStack.pushAttached(Qt.resolvedUrl("pages/Tracking.qml"), {workout: workout, cover: cover})
+    cover: CoverPage {
+        workout: workout
+        window: appWindow
+    }
+
+    initialPage: Component { MainPage { } }
+
+    Component.onCompleted: pageStack.pushAttached(Qt.resolvedUrl("pages/Tracking.qml"),
+                                                  {workout: workout, cover: cover})
 }

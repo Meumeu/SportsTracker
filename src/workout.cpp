@@ -22,12 +22,6 @@ Workout::Workout(QObject *parent) :
         position_source->startUpdates();
     }
 
-    std::cerr << "Available sources:" << std::endl;
-    for(const QString& i: QGeoPositionInfoSource::availableSources())
-    {
-        std::cerr << "  " << i.toStdString() << std::endl;
-    }
-
     _timer->setSingleShot(true);
     connect(_timer, &QTimer::timeout, this, &Workout::timerShot);
     connect(this, &Workout::durationChanged, this, &Workout::computeAvgSpeed);
@@ -141,7 +135,9 @@ void Workout::computeAvgSpeed()
 void Workout::save()
 {
     if (_start_date.isValid())
-        track.save(_start_date);
+    {
+        emit saved(track.save(_start_date, _duration * 0.001));
+    }
 }
 
 const QString& Workout::lastPosition() const

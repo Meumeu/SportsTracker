@@ -30,39 +30,18 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import SportsTracker 1.0
 import "../util.js" as Util
 
 
 Page {
     id: mainPage
 
-    ListModel {
-        id: workoutData
-        ListElement {
-            date: "lorem ipsum"
-            sport: "foobar"
-            distance: 10
-            time: 3000
-        }
-        ListElement {
-            date: "lorem ipsum"
-            sport: "foobar"
-            distance: 11
-            time: 3001
-        }
-        ListElement {
-            date: "lorem ipsum"
-            sport: "foobar"
-            distance: 12
-            time: 3600
-        }
-    }
-
     SilicaListView {
         id: workoutList
         anchors.fill: parent
-        model: workoutData
-        spacing: Theme.paddingMedium
+        model: WorkoutSummaryList.workoutList
+        spacing: Theme.paddingLarge
 
         PullDownMenu {
             MenuItem {
@@ -101,12 +80,12 @@ Page {
                 {
                     Label {
                         x: Theme.paddingLarge
-                        text: "toto"
+                        text: Util.timeToString(WorkoutSummaryList.totalTime)
                         color: Theme.secondaryColor
                     }
                     Label {
                         x: Theme.paddingLarge
-                        text: "toto"
+                        text: qsTr("%1 km").arg((WorkoutSummaryList.totalDistance/1000).toLocaleString(Qt.locale() , "f", 2))
                         color: Theme.secondaryColor
                     }
                 }
@@ -120,16 +99,17 @@ Page {
 
         delegate: BackgroundItem {
             id: delegate
-            height: column2.height
+            height: column2.height// + 2 * Theme.paddingLarge
 
             Column {
                 id: column2
 
                 width: parent.width - 2 * x
                 x: Theme.paddingLarge
+               // y: Theme.paddingLarge
 
                 Label {
-                    text: date
+                    text: Qt.formatDateTime(date)
                     font.pixelSize: Theme.fontSizeSmall
                 }
                 Row {
@@ -148,7 +128,7 @@ Page {
                             font.pixelSize: Theme.fontSizeSmall
                         }
                         Label {
-                            text: qsTr("%1 km").arg(distance.toLocaleString(Qt.locale() , "f", 2))
+                            text: qsTr("%1 km").arg((distance/1000).toLocaleString(Qt.locale() , "f", 2))
                             font.pixelSize: Theme.fontSizeSmall
                         }
                     }
@@ -170,7 +150,7 @@ Page {
                             font.pixelSize: Theme.fontSizeSmall
                         }
                         Label {
-                            text: time > 0 ? qsTr("%1 km/h").arg((distance * 3600 / time).toLocaleString(Qt.locale() , "f", 1)) : qsTr("N/A")
+                            text: time > 0 ? qsTr("%1 km/h").arg((distance * 3.6 / time).toLocaleString(Qt.locale() , "f", 1)) : qsTr("N/A")
                             font.pixelSize: Theme.fontSizeSmall
                         }
                     }

@@ -34,6 +34,12 @@
 
 #include <sailfishapp.h>
 #include "workout.h"
+#include "workoutsummarylist.h"
+
+static QObject *WorkoutSummaryList_provider(QQmlEngine *, QJSEngine *)
+{
+    return new WorkoutSummaryList;
+}
 
 int main(int argc, char *argv[])
 {
@@ -47,6 +53,9 @@ int main(int argc, char *argv[])
     // To display the view, call "show()" (will show fullscreen on device).
 
     qmlRegisterType<Workout>("SportsTracker", 1, 0, "Workout");
+    qmlRegisterUncreatableType<WorkoutSummary>("SportsTracker", 1, 0, "WorkoutSummary", "Cannot create WorkoutSummary from QML");
+    //qmlRegisterType<WorkoutSummaryList>("SportsTracker", 1, 0, "WorkoutSummaryList");
+    qmlRegisterSingletonType<WorkoutSummaryList>("SportsTracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList_provider);
     qRegisterMetaType<QGeoPositionInfo>("QGeoPositionInfo");
 
     return SailfishApp::main(argc, argv);
