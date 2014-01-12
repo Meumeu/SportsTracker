@@ -30,10 +30,18 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import SportsTracker 1.0
 import "pages"
+import "cover"
 
 ApplicationWindow {
+    id: appWindow
+
+    Workout {
+        id: workout
+    }
+
+    cover: CoverPage { workout: workout; window: appWindow }
     initialPage: Component { MainPage {} }
-    cover:  Qt.resolvedUrl("cover/CoverPage.qml")
-    Component.onCompleted: pageStack.pushAttached(Qt.resolvedUrl("pages/Tracking.qml"));
+    Component.onCompleted: pageStack.pushAttached(Qt.resolvedUrl("pages/Tracking.qml"), {workout: workout, cover: cover})
 }

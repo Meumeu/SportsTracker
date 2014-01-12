@@ -30,19 +30,11 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../util.js" as Util
 
 
 Page {
-    function timeToString(t)
-    {
-        var s = t % 60;
-        var m = Math.floor(t / 60) % 60
-        var h = Math.floor(t / 3600)
-
-        return "%1:%2:%3".arg(h).arg(m < 10 ? ("0" + m) : m).arg(s < 10 ? ("0"+ s) : s);
-    }
-
-    id: page
+    id: mainPage
 
     ListModel {
         id: workoutData
@@ -74,17 +66,13 @@ Page {
 
         PullDownMenu {
             MenuItem {
-                text: "Start tracking"
-                onClicked: pageStack.navigateForward(PageStackAction.Animated)
-            }
-            MenuItem {
-                text: "Settings"
+                text: qsTr("Settings")
                 onClicked: pageStack.push(Qt.resolvedUrl("Settings.qml"))
             }
         }
 
         header: Column {
-            width: page.width
+            width: mainPage.width
             height: childrenRect.height + Theme.paddingLarge
 
             PageHeader {
@@ -93,7 +81,7 @@ Page {
 
             Label {
                 x: Theme.paddingLarge
-                text: workoutList.count + " workout(s)"
+                text: qsTr("%n workout(s)", "", workoutList.count)
             }
             Row
             {
@@ -102,11 +90,11 @@ Page {
                 {
                     Label {
                         x: Theme.paddingLarge
-                        text: "Total time"
+                        text: qsTr("Total time")
                     }
                     Label {
                         x: Theme.paddingLarge
-                        text: "Total distance"
+                        text: qsTr("Total distance")
                     }
                 }
                 Column
@@ -127,7 +115,7 @@ Page {
 
         ViewPlaceholder {
             enabled: workoutList.count == 0
-            text: "No items"
+            text: qsTr("No workouts")
         }
 
         delegate: BackgroundItem {
@@ -156,33 +144,33 @@ Page {
                         id: column1
                         width: (delegate.width - img.width)/3
                         Label {
-                            text: "Distance"
+                            text: qsTr("Distance")
                             font.pixelSize: Theme.fontSizeSmall
                         }
                         Label {
-                            text: distance.toLocaleString(Qt.locale() , "f", 2) + " km"
-                            font.pixelSize: Theme.fontSizeSmall
-                        }
-                    }
-                    Column {
-                        width: (delegate.width - img.width)/3
-                        Label {
-                            text: "Time"
-                            font.pixelSize: Theme.fontSizeSmall
-                        }
-                        Label {
-                            text: timeToString(time)
+                            text: qsTr("%1 km").arg(distance.toLocaleString(Qt.locale() , "f", 2))
                             font.pixelSize: Theme.fontSizeSmall
                         }
                     }
                     Column {
                         width: (delegate.width - img.width)/3
                         Label {
-                            text: "Speed"
+                            text: qsTr("Time")
                             font.pixelSize: Theme.fontSizeSmall
                         }
                         Label {
-                            text: time > 0 ? ((distance * 3600 / time).toLocaleString(Qt.locale() , "f", 1) + " km/h") : "N/A"
+                            text: Util.timeToString(time)
+                            font.pixelSize: Theme.fontSizeSmall
+                        }
+                    }
+                    Column {
+                        width: (delegate.width - img.width)/3
+                        Label {
+                            text: qsTr("Speed")
+                            font.pixelSize: Theme.fontSizeSmall
+                        }
+                        Label {
+                            text: time > 0 ? qsTr("%1 km/h").arg((distance * 3600 / time).toLocaleString(Qt.locale() , "f", 1)) : qsTr("N/A")
                             font.pixelSize: Theme.fontSizeSmall
                         }
                     }

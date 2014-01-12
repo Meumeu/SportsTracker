@@ -5,7 +5,7 @@ Page {
     SilicaFlickable {
         Column {
             PageHeader {
-                title: "Settings"
+                title: qsTr("Settings")
             }
         }
     }

@@ -30,23 +30,41 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import SportsTracker 1.0
+import "../util.js" as Util
 
 CoverBackground {
-    Label {
-        id: label
-        anchors.centerIn: parent
-        text: ""
+    property Workout workout;
+    property ApplicationWindow window;
+    signal stopWorkout;
+
+    CoverPlaceholder {
+        icon.source: "image://theme/icon-camera-sports"
+        text: (workout.status == Workout.Tracking || workout.status == Workout.Paused) ?
+                  qsTr("%1\n%2 km\n%3 km/h")
+                    .arg(Util.timeToString(workout.duration))
+                    .arg(workout.distance.toLocaleString(Qt.locale() , "f", 2))
+                    .arg(workout.speed.toLocaleString(Qt.locale() , "f", 1)) :
+                  ""
     }
 
     CoverActionList {
         id: coverAction
-
-        /*CoverAction {
-            iconSource: "image://theme/icon-cover-next"
-        }*/
+        enabled: workout.status == Workout.Tracking || workout.status == Workout.Paused
 
         CoverAction {
-            iconSource: "image://theme/icon-cover-pause"
+            iconSource: "image://theme/icon-camera-stop"
+            onTriggered: stopWorkout()
+                /*{
+                workout.status = Workout.Stopped;
+                window.activate();
+                if (pageStack.depth == 1) pageStack.navigateForward();
+            }*/
+        }
+
+        CoverAction {
+            iconSource: workout.status == Workout.Tracking ? "image://theme/icon-cover-pause" : "image://theme/icon-camera-record"
+            onTriggered: workout.status = (workout.status == Workout.Tracking ? Workout.Paused : Workout.Tracking)
         }
     }
 }

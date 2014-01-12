@@ -8,22 +8,24 @@
 #         - icon definition filename in desktop file must be changed
 TARGET = SportsTracker
 
-CONFIG += sailfishapp
+CONFIG += sailfishapp c++11
 
 SOURCES += src/SportsTracker.cpp \
-    src/workout.cpp
+    src/workout.cpp \
+    src/gpx.cpp
 
 OTHER_FILES += qml/SportsTracker.qml \
     qml/cover/CoverPage.qml \
-    qml/pages/SecondPage.qml \
     rpm/SportsTracker.spec \
     rpm/SportsTracker.yaml \
     SportsTracker.desktop \
     qml/pages/MainPage.qml \
     qml/pages/Tracking.qml \
-    qml/pages/Settings.qml
+    qml/pages/Settings.qml \
+    qml/util.js
 
 HEADERS += \
-    src/workout.h
+    src/workout.h \
+    src/gpx.h
 
-QT += positioning
+QT += positioning location xml
