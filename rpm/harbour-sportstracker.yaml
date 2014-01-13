@@ -1,4 +1,4 @@
-Name: SportsTracker
+Name: harbour-sportstracker
 Summary: Sports Tracker
 Version: 0.1
 Release: 1
@@ -22,7 +22,7 @@ Requires:
 Files:
 - /usr/share/icons/hicolor/86x86/apps
 - /usr/share/applications
-- /usr/share/SportsTracker
+- /usr/share/harbour-sportstracker
 - /usr/bin
 - '%{_datadir}/icons/hicolor/86x86/apps/%{name}.png'
 - '%{_datadir}/applications/%{name}.desktop'

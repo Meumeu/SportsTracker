@@ -6,7 +6,7 @@
 #         - desktop icon filename must be changed
 #         - desktop filename must be changed
 #         - icon definition filename in desktop file must be changed
-TARGET = SportsTracker
+TARGET = harbour-sportstracker
 
 CONFIG += sailfishapp c++11
 
@@ -16,11 +16,11 @@ SOURCES += src/SportsTracker.cpp \
     src/workoutsummary.cpp \
     src/workoutsummarylist.cpp
 
-OTHER_FILES += qml/SportsTracker.qml \
+OTHER_FILES += qml/harbour-sportstracker.qml \
     qml/cover/CoverPage.qml \
-    rpm/SportsTracker.spec \
-    rpm/SportsTracker.yaml \
-    SportsTracker.desktop \
+    rpm/harbour-sportstracker.spec \
+    rpm/harbour-sportstracker.yaml \
+    harbour-sportstracker.desktop \
     qml/pages/MainPage.qml \
     qml/pages/Tracking.qml \
     qml/pages/Settings.qml \
