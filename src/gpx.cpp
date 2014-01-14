@@ -114,7 +114,7 @@ void gpx::saveWaypoint(QDomElement& trkseg, const QGeoPositionInfo& pt)
     QDomElement ext = _doc->createElement("extensions");
     if (pt.hasAttribute(QGeoPositionInfo::GroundSpeed))
     {
-        QDomElement speed = _doc->createElement("sportstracker:groundspeed");
+        QDomElement speed = _doc->createElement("sport:groundspeed");
         speed.appendChild(_doc->createTextNode(QString::number(pt.attribute(QGeoPositionInfo::GroundSpeed))));
         ext.appendChild(speed);
     }
@@ -145,8 +145,7 @@ void gpx::saveMetadataExt(QDomElement& metadataExt, const QString& name, const Q
     assert(_doc != nullptr);
     assert(metadataExt.tagName() == "extensions");
 
-    //QDomElement ext = _doc->createElementNS("http://sportstracker.meumeu.org/", name);
-    QDomElement ext = _doc->createElement("sportstracker:" + name);
+    QDomElement ext = _doc->createElement("sport:" + name);
     ext.appendChild(_doc->createTextNode(value));
     metadataExt.appendChild(ext);
 }
@@ -175,7 +174,7 @@ QString gpx::save(QDateTime start_date, double duration)
 
     QDomElement root = _doc->createElement("gpx");
     root.setAttribute("xmlns", "http://www.topografix.com/GPX/1/1");
-    root.setAttribute("xmlns:sportstracker", "http://sportstracker.meumeu.org/");
+    root.setAttribute("xmlns:sport", "http://sportstracker.meumeu.org/");
     root.setAttribute("version", "1.1");
     root.setAttribute("creator", "http://sportstracker.meumeu.org/");
 

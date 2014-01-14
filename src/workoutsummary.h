@@ -1,19 +1,13 @@
 #ifndef WORKOUTSUMMARY_H
 #define WORKOUTSUMMARY_H
 
-#include <QObject>
+#include <QString>
 #include <QDateTime>
 
-class WorkoutSummary : public QObject
+class WorkoutSummary
 {
-    Q_OBJECT
 public:
-    explicit WorkoutSummary(QString filename, QObject *parent = 0);
-
-    Q_PROPERTY(QString sport READ sport CONSTANT)
-    Q_PROPERTY(QDateTime date READ date CONSTANT)
-    Q_PROPERTY(double distance READ distance CONSTANT)
-    Q_PROPERTY(double time READ time CONSTANT)
+    explicit WorkoutSummary(QString filename);
 
     QString filename() const;
     QString sport() const;
@@ -27,11 +21,6 @@ private:
     QDateTime _date;
     double _distance;
     double _time;
-
-signals:
-
-public slots:
-
 };
 
 #endif // WORKOUTSUMMARY_H

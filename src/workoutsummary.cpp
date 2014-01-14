@@ -4,8 +4,8 @@
 #include <QDomDocument>
 #include <QDateTime>
 
-WorkoutSummary::WorkoutSummary(QString filename, QObject *parent) :
-    QObject(parent), _filename(filename)
+WorkoutSummary::WorkoutSummary(QString filename) :
+    _filename(filename)
 {
     QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QDir::separator() + filename;
 
@@ -21,11 +21,11 @@ WorkoutSummary::WorkoutSummary(QString filename, QObject *parent) :
     QDomElement metadata = root.firstChildElement("metadata");
     QDomElement metadataExt = metadata.firstChildElement("extensions");
 
-    _sport = metadataExt.firstChildElement("sportstracker:sport").firstChild().toText().data();
+    _sport = metadataExt.firstChildElement("sport:sport").firstChild().toText().data();
     QString start_date = metadata.firstChildElement("time").firstChild().toText().data();
     _date = QDateTime::fromString(start_date, Qt::ISODate);
-    _distance = metadataExt.firstChildElement("sportstracker:distance").firstChild().toText().data().toDouble();
-    _time = metadataExt.firstChildElement("sportstracker:duration").firstChild().toText().data().toDouble();
+    _distance = metadataExt.firstChildElement("sport:distance").firstChild().toText().data().toDouble();
+    _time = metadataExt.firstChildElement("sport:duration").firstChild().toText().data().toDouble();
 }
 
 QString WorkoutSummary::sport() const

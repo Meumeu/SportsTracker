@@ -48,7 +48,6 @@ int main(int argc, char *argv[])
     // To display the view, call "show()" (will show fullscreen on device).
 
     qmlRegisterType<Workout>("SportsTracker", 1, 0, "Workout");
-    qmlRegisterUncreatableType<WorkoutSummary>("SportsTracker", 1, 0, "WorkoutSummary", "Cannot create WorkoutSummary from QML");
     qmlRegisterSingletonType<WorkoutSummaryList>("SportsTracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList::provider);
     qRegisterMetaType<QGeoPositionInfo>("QGeoPositionInfo");
 

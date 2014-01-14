@@ -17,7 +17,7 @@ class WorkoutSummaryList : public QAbstractListModel
 {
     Q_OBJECT
 
-    std::vector<WorkoutSummary *> _list;
+    std::vector<WorkoutSummary> _list;
 
     double _totalDistance;
     double _totalTime;
@@ -32,13 +32,14 @@ public:
     Q_PROPERTY(double totalTime READ totalTime NOTIFY totalTimeChanged)
 
     Q_INVOKABLE void addWorkout(QString filename);
-    Q_INVOKABLE void removeWorkout(QString filename);
+    bool removeRows(int row, int count, const QModelIndex& parent) override;
 
     double totalDistance();
     double totalTime();
 
     QVariant data(const QModelIndex &index, int role) const override;
     int rowCount(const QModelIndex &parent) const override;
+    QHash<int, QByteArray> roleNames() const override;
 
     static QObject * provider(QQmlEngine *, QJSEngine *) { return new WorkoutSummaryList; }
 

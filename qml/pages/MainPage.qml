@@ -94,72 +94,96 @@ Page {
 
         ViewPlaceholder {
             enabled: workoutList.count == 0
-            text: qsTr("No workouts")
+            text: qsTr("No workout")
         }
 
-        delegate: BackgroundItem {
-            id: delegate
-            height: column2.height// + 2 * Theme.paddingLarge
+        property Item contextMenu
+        delegate: /*Item {
+            id: listItem
+            //property bool menuOpen: contextMenu != null && contextMenu.parent === listItem
+            height: menuOpen ? contextMenu.height + contentItem.height : contentItem.height
+            width: parent.width
+*/
+            BackgroundItem {
+                id: contentItem
+                height: column2.height
+                width: parent.width
 
-            Column {
-                id: column2
+                /*onPressAndHold: {
+                    if (!contextMenu)
+                        contextMenu = contextMenuComponent.createObject(listView)
+                    contextMenu.show(listItem)
+                }*/
 
-                width: parent.width - 2 * x
-                x: Theme.paddingLarge
-               // y: Theme.paddingLarge
+                Column {
+                    id: column2
 
-                Label {
-                    text: Qt.formatDateTime(display.date)
-                    font.pixelSize: Theme.fontSizeSmall
-                }
-                Row {
-                    Image {
-                        id: img
-                        source: "image://theme/icon-camera-sports"
-                        height: column1.height
-                        width: height + Theme.paddingLarge
-                        fillMode: Image.PreserveAspectFit
+                    width: parent.width - 2 * x
+                    x: Theme.paddingLarge
+
+                    Label {
+                        text: Qt.formatDateTime(date)
+                        font.pixelSize: Theme.fontSizeSmall
                     }
-                    Column {
-                        id: column1
-                        width: (delegate.width - img.width)/3
-                        Label {
-                            text: qsTr("Distance")
-                            font.pixelSize: Theme.fontSizeSmall
+                    Row {
+                        Image {
+                            id: img
+                            source: "image://theme/icon-camera-sports"
+                            height: column1.height
+                            width: height + Theme.paddingLarge
+                            fillMode: Image.PreserveAspectFit
                         }
-                        Label {
-                            text: qsTr("%1 km").arg((display.distance/1000).toLocaleString(Qt.locale() , "f", 2))
-                            font.pixelSize: Theme.fontSizeSmall
+                        Column {
+                            id: column1
+                            width: (contentItem.width - img.width)/3
+                            Label {
+                                text: qsTr("Distance")
+                                font.pixelSize: Theme.fontSizeSmall
+                            }
+                            Label {
+                                text: qsTr("%1 km").arg((distance/1000).toLocaleString(Qt.locale() , "f", 2))
+                                font.pixelSize: Theme.fontSizeSmall
+                            }
                         }
-                    }
-                    Column {
-                        width: (delegate.width - img.width)/3
-                        Label {
-                            text: qsTr("Time")
-                            font.pixelSize: Theme.fontSizeSmall
+                        Column {
+                            width: (contentItem.width - img.width)/3
+                            Label {
+                                text: qsTr("Time")
+                                font.pixelSize: Theme.fontSizeSmall
+                            }
+                            Label {
+                                text: Util.timeToString(time)
+                                font.pixelSize: Theme.fontSizeSmall
+                            }
                         }
-                        Label {
-                            text: Util.timeToString(display.time)
-                            font.pixelSize: Theme.fontSizeSmall
-                        }
-                    }
-                    Column {
-                        width: (delegate.width - img.width)/3
-                        Label {
-                            text: qsTr("Speed")
-                            font.pixelSize: Theme.fontSizeSmall
-                        }
-                        Label {
-                            text: display.time > 0 ? qsTr("%1 km/h").arg((display.distance * 3.6 / display.time).toLocaleString(Qt.locale() , "f", 1)) : qsTr("N/A")
-                            font.pixelSize: Theme.fontSizeSmall
+                        Column {
+                            width: (contentItem.width - img.width)/3
+                            Label {
+                                text: qsTr("Speed")
+                                font.pixelSize: Theme.fontSizeSmall
+                            }
+                            Label {
+                                text: time > 0 ? qsTr("%1 km/h").arg((distance * 3.6 / time).toLocaleString(Qt.locale() , "f", 1)) : qsTr("N/A")
+                                font.pixelSize: Theme.fontSizeSmall
+                            }
                         }
                     }
                 }
             }
-        }
+        //}
 
         VerticalScrollDecorator {}
     }
+
+    /*Component {
+        id: contextMenuComponent
+        ContextMenu {
+            MenuItem {
+                text: qsTr("Delete")
+                onClicked: console.log("pouet")
+            }
+        }
+    }*/
 }
 
 
