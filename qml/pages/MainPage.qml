@@ -40,7 +40,7 @@ Page {
     SilicaListView {
         id: workoutList
         anchors.fill: parent
-        model: WorkoutSummaryList.workoutList
+        model: WorkoutSummaryList
         spacing: Theme.paddingLarge
 
         PullDownMenu {
@@ -109,7 +109,7 @@ Page {
                // y: Theme.paddingLarge
 
                 Label {
-                    text: Qt.formatDateTime(date)
+                    text: Qt.formatDateTime(display.date)
                     font.pixelSize: Theme.fontSizeSmall
                 }
                 Row {
@@ -128,7 +128,7 @@ Page {
                             font.pixelSize: Theme.fontSizeSmall
                         }
                         Label {
-                            text: qsTr("%1 km").arg((distance/1000).toLocaleString(Qt.locale() , "f", 2))
+                            text: qsTr("%1 km").arg((display.distance/1000).toLocaleString(Qt.locale() , "f", 2))
                             font.pixelSize: Theme.fontSizeSmall
                         }
                     }
@@ -139,7 +139,7 @@ Page {
                             font.pixelSize: Theme.fontSizeSmall
                         }
                         Label {
-                            text: Util.timeToString(time)
+                            text: Util.timeToString(display.time)
                             font.pixelSize: Theme.fontSizeSmall
                         }
                     }
@@ -150,7 +150,7 @@ Page {
                             font.pixelSize: Theme.fontSizeSmall
                         }
                         Label {
-                            text: time > 0 ? qsTr("%1 km/h").arg((distance * 3.6 / time).toLocaleString(Qt.locale() , "f", 1)) : qsTr("N/A")
+                            text: display.time > 0 ? qsTr("%1 km/h").arg((display.distance * 3.6 / display.time).toLocaleString(Qt.locale() , "f", 1)) : qsTr("N/A")
                             font.pixelSize: Theme.fontSizeSmall
                         }
                     }

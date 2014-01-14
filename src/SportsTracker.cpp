@@ -36,11 +36,6 @@
 #include "workout.h"
 #include "workoutsummarylist.h"
 
-static QObject *WorkoutSummaryList_provider(QQmlEngine *, QJSEngine *)
-{
-    return new WorkoutSummaryList;
-}
-
 int main(int argc, char *argv[])
 {
     // SailfishApp::main() will display "qml/template.qml", if you need more
@@ -54,8 +49,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<Workout>("SportsTracker", 1, 0, "Workout");
     qmlRegisterUncreatableType<WorkoutSummary>("SportsTracker", 1, 0, "WorkoutSummary", "Cannot create WorkoutSummary from QML");
-    //qmlRegisterType<WorkoutSummaryList>("SportsTracker", 1, 0, "WorkoutSummaryList");
-    qmlRegisterSingletonType<WorkoutSummaryList>("SportsTracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList_provider);
+    qmlRegisterSingletonType<WorkoutSummaryList>("SportsTracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList::provider);
     qRegisterMetaType<QGeoPositionInfo>("QGeoPositionInfo");
 
     return SailfishApp::main(argc, argv);

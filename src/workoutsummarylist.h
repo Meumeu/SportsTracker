@@ -2,15 +2,22 @@
 #define WORKOUTSUMMARYLIST_H
 
 #include <QObject>
-#include <QQmlListProperty>
+#include <QAbstractListModel>
+#include <vector>
 #include "workoutsummary.h"
 
-class WorkoutSummaryList : public QObject
+#if (__GNUC__ < 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ < 7))
+#define override
+#endif
+
+class QQmlEngine;
+class QJSEngine;
+
+class WorkoutSummaryList : public QAbstractListModel
 {
     Q_OBJECT
 
-    QList<WorkoutSummary *> _list;
-    QQmlListProperty<WorkoutSummary> _workoutList;
+    std::vector<WorkoutSummary *> _list;
 
     double _totalDistance;
     double _totalTime;
@@ -18,23 +25,24 @@ class WorkoutSummaryList : public QObject
     void computeDistanceAndTime();
 
 public:
-    typedef QQmlListProperty<WorkoutSummary> WorkoutList;
 
     explicit WorkoutSummaryList(QObject *parent = 0);
 
-    Q_PROPERTY(QQmlListProperty<WorkoutSummary> workoutList READ workoutList NOTIFY workoutListChanged)
     Q_PROPERTY(double totalDistance READ totalDistance NOTIFY totalDistanceChanged)
     Q_PROPERTY(double totalTime READ totalTime NOTIFY totalTimeChanged)
 
     Q_INVOKABLE void addWorkout(QString filename);
     Q_INVOKABLE void removeWorkout(QString filename);
 
-    WorkoutList& workoutList();
     double totalDistance();
     double totalTime();
 
+    QVariant data(const QModelIndex &index, int role) const override;
+    int rowCount(const QModelIndex &parent) const override;
+
+    static QObject * provider(QQmlEngine *, QJSEngine *) { return new WorkoutSummaryList; }
+
 signals:
-    void workoutListChanged(WorkoutList& workoutList);
     void totalDistanceChanged(double totalDistance);
     void totalTimeChanged(double totalTime);
 
