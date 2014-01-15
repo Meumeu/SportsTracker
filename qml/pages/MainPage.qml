@@ -94,96 +94,89 @@ Page {
 
         ViewPlaceholder {
             enabled: workoutList.count == 0
-            text: qsTr("No workout")
+            text: qsTr("No workouts")
         }
 
+
         property Item contextMenu
-        delegate: /*Item {
-            id: listItem
-            //property bool menuOpen: contextMenu != null && contextMenu.parent === listItem
-            height: menuOpen ? contextMenu.height + contentItem.height : contentItem.height
+        delegate: ListItem {
+            id: contentItem
+            menu: contextMenu
             width: parent.width
-*/
-            BackgroundItem {
-                id: contentItem
-                height: column2.height
-                width: parent.width
+            contentHeight: column2.height
 
-                /*onPressAndHold: {
-                    if (!contextMenu)
-                        contextMenu = contextMenuComponent.createObject(listView)
-                    contextMenu.show(listItem)
-                }*/
+            ListView.onRemove: animateRemoval(listItem)
+            function remove() {
+                remorseAction("Deleting", function() { WorkoutSummaryList.remove(index) })
+            }
 
-                Column {
-                    id: column2
-
-                    width: parent.width - 2 * x
-                    x: Theme.paddingLarge
-
-                    Label {
-                        text: Qt.formatDateTime(date)
-                        font.pixelSize: Theme.fontSizeSmall
+            Component {
+                id: contextMenu
+                ContextMenu {
+                    MenuItem {
+                        text: "Remove"
+                        onClicked: remove()
                     }
-                    Row {
-                        Image {
-                            id: img
-                            source: "image://theme/icon-camera-sports"
-                            height: column1.height
-                            width: height + Theme.paddingLarge
-                            fillMode: Image.PreserveAspectFit
+                }
+            }
+
+            Column {
+                id: column2
+
+                width: parent.width - 2 * x
+                x: Theme.paddingLarge
+
+                Label {
+                    text: Qt.formatDateTime(date)
+                    font.pixelSize: Theme.fontSizeSmall
+                }
+                Row {
+                    Image {
+                        id: img
+                        source: "image://theme/icon-camera-sports"
+                        height: column1.height
+                        width: height + Theme.paddingLarge
+                        fillMode: Image.PreserveAspectFit
+                    }
+                    Column {
+                        id: column1
+                        width: (contentItem.width - img.width)/3
+                        Label {
+                            text: qsTr("Distance")
+                            font.pixelSize: Theme.fontSizeSmall
                         }
-                        Column {
-                            id: column1
-                            width: (contentItem.width - img.width)/3
-                            Label {
-                                text: qsTr("Distance")
-                                font.pixelSize: Theme.fontSizeSmall
-                            }
-                            Label {
-                                text: qsTr("%1 km").arg((distance/1000).toLocaleString(Qt.locale() , "f", 2))
-                                font.pixelSize: Theme.fontSizeSmall
-                            }
+                        Label {
+                            text: qsTr("%1 km").arg((distance/1000).toLocaleString(Qt.locale() , "f", 2))
+                            font.pixelSize: Theme.fontSizeSmall
                         }
-                        Column {
-                            width: (contentItem.width - img.width)/3
-                            Label {
-                                text: qsTr("Time")
-                                font.pixelSize: Theme.fontSizeSmall
-                            }
-                            Label {
-                                text: Util.timeToString(time)
-                                font.pixelSize: Theme.fontSizeSmall
-                            }
+                    }
+                    Column {
+                        width: (contentItem.width - img.width)/3
+                        Label {
+                            text: qsTr("Time")
+                            font.pixelSize: Theme.fontSizeSmall
                         }
-                        Column {
-                            width: (contentItem.width - img.width)/3
-                            Label {
-                                text: qsTr("Speed")
-                                font.pixelSize: Theme.fontSizeSmall
-                            }
-                            Label {
-                                text: time > 0 ? qsTr("%1 km/h").arg((distance * 3.6 / time).toLocaleString(Qt.locale() , "f", 1)) : qsTr("N/A")
-                                font.pixelSize: Theme.fontSizeSmall
-                            }
+                        Label {
+                            text: Util.timeToString(time)
+                            font.pixelSize: Theme.fontSizeSmall
+                        }
+                    }
+                    Column {
+                        width: (contentItem.width - img.width)/3
+                        Label {
+                            text: qsTr("Speed")
+                            font.pixelSize: Theme.fontSizeSmall
+                        }
+                        Label {
+                            text: time > 0 ? qsTr("%1 km/h").arg((distance * 3.6 / time).toLocaleString(Qt.locale() , "f", 1)) : qsTr("N/A")
+                            font.pixelSize: Theme.fontSizeSmall
                         }
                     }
                 }
             }
-        //}
-
+        }
         VerticalScrollDecorator {}
     }
-
-    /*Component {
-        id: contextMenuComponent
-        ContextMenu {
-            MenuItem {
-                text: qsTr("Delete")
-                onClicked: console.log("pouet")
-            }
-        }
-    }*/
 }
 
 

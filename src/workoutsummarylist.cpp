@@ -69,14 +69,15 @@ void WorkoutSummaryList::addWorkout(QString filename)
     computeDistanceAndTime();
 }
 
-bool WorkoutSummaryList::removeRows(int row, int count, const QModelIndex& parent)
+void WorkoutSummaryList::remove(int index)
 {
-    beginRemoveRows(parent, row, row + count - 1);
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) +
+            QDir::separator() + _list[index].filename();
+    QFile::remove(path);
 
-    _list.erase(_list.begin() + row, _list.begin() + row + count - 1);
-
+    beginRemoveRows(QModelIndex(), index, index);
+    _list.erase(_list.begin() + index, _list.begin() + index + 1);
     endRemoveRows();
-    return true;
 }
 
 double WorkoutSummaryList::totalDistance()

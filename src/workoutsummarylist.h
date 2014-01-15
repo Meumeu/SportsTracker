@@ -32,7 +32,7 @@ public:
     Q_PROPERTY(double totalTime READ totalTime NOTIFY totalTimeChanged)
 
     Q_INVOKABLE void addWorkout(QString filename);
-    bool removeRows(int row, int count, const QModelIndex& parent) override;
+    Q_INVOKABLE void remove(int index);
 
     double totalDistance();
     double totalTime();
