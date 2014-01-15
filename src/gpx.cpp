@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QDomDocument>
+#include <math.h>
 
 typedef std::tuple<double, double, double> vector3;
 
@@ -12,10 +13,10 @@ static vector3 wgs84_to_ecef(double lat, double lon, double alt)
     double a = 6378137;
     double e2 = 6.69437999014E-3;
 
-    double cos_lat = cos(lat);
-    double sin_lat = sin(lat);
-    double cos_lon = cos(lon);
-    double sin_lon = sin(lon);
+    double cos_lat = cos(lat * M_PI / 180);
+    double sin_lat = sin(lat * M_PI / 180);
+    double cos_lon = cos(lon * M_PI / 180);
+    double sin_lon = sin(lon * M_PI / 180);
 
     double N = a / sqrt(1 - e2 * sin_lat * sin_lat);
 
@@ -88,6 +89,11 @@ void gpx::saveWaypoint(QDomElement& trkseg, const QGeoPositionInfo& pt)
         ele.appendChild(_doc->createTextNode(QString::number(pt.coordinate().altitude())));
         trkpt.appendChild(ele);
     }
+
+    QDomElement time = _doc->createElement("time");
+    time.appendChild(_doc->createTextNode(pt.timestamp().toUTC().toString("yyyy'-'MM'-'dd'T'hh':'mm':'ss'Z'")));
+    trkpt.appendChild(time);
+
 
     gpx_add_attribute(*_doc, trkpt, pt, QGeoPositionInfo::MagneticVariation, "magvar");
 
