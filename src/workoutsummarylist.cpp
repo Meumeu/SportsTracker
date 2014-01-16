@@ -78,6 +78,8 @@ void WorkoutSummaryList::remove(int index)
     beginRemoveRows(QModelIndex(), index, index);
     _list.erase(_list.begin() + index, _list.begin() + index + 1);
     endRemoveRows();
+
+    computeDistanceAndTime();
 }
 
 double WorkoutSummaryList::totalDistance()

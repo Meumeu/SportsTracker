@@ -31,6 +31,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import SportsTracker 1.0
+import "../components"
 import "../util.js" as Util
 
 
@@ -41,7 +42,6 @@ Page {
         id: workoutList
         anchors.fill: parent
         model: WorkoutSummaryList
-        spacing: Theme.paddingLarge
 
         PullDownMenu {
             MenuItem {
@@ -69,10 +69,12 @@ Page {
                 {
                     Label {
                         x: Theme.paddingLarge
+                        color: Theme.secondaryColor
                         text: qsTr("Total time")
                     }
                     Label {
                         x: Theme.paddingLarge
+                        color: Theme.secondaryColor
                         text: qsTr("Total distance")
                     }
                 }
@@ -81,12 +83,10 @@ Page {
                     Label {
                         x: Theme.paddingLarge
                         text: Util.timeToString(WorkoutSummaryList.totalTime)
-                        color: Theme.secondaryColor
                     }
                     Label {
                         x: Theme.paddingLarge
-                        text: qsTr("%1 km").arg((WorkoutSummaryList.totalDistance/1000).toLocaleString(Qt.locale() , "f", 2))
-                        color: Theme.secondaryColor
+                        text: Util.distanceToString(WorkoutSummaryList.totalDistance)
                     }
                 }
             }
@@ -97,86 +97,45 @@ Page {
             text: qsTr("No workouts")
         }
 
-
-        property Item contextMenu
         delegate: ListItem {
             id: contentItem
             menu: contextMenu
             width: parent.width
-            contentHeight: column2.height
+            contentHeight: workout.height + Theme.paddingLarge
 
             ListView.onRemove: animateRemoval(listItem)
             function remove() {
-                remorseAction("Deleting", function() { WorkoutSummaryList.remove(index) })
+                remorseAction(qsTr("Deleting"), function()
+                    {
+                        WorkoutSummaryList.remove(index)
+                    })
             }
 
             Component {
                 id: contextMenu
                 ContextMenu {
                     MenuItem {
-                        text: "Remove"
+                        text: qsTr("Delete")
                         onClicked: remove()
                     }
+                    MenuItem {
+                        text: qsTr("Share")
+                    }
                 }
             }
 
-            Column {
-                id: column2
-
+            WorkoutSummary {
+                id: workout
                 width: parent.width - 2 * x
                 x: Theme.paddingLarge
+                y: Theme.paddingLarge / 2
 
-                Label {
-                    text: Qt.formatDateTime(date)
-                    font.pixelSize: Theme.fontSizeSmall
-                }
-                Row {
-                    Image {
-                        id: img
-                        source: "image://theme/icon-camera-sports"
-                        height: column1.height
-                        width: height + Theme.paddingLarge
-                        fillMode: Image.PreserveAspectFit
-                    }
-                    Column {
-                        id: column1
-                        width: (contentItem.width - img.width)/3
-                        Label {
-                            text: qsTr("Distance")
-                            font.pixelSize: Theme.fontSizeSmall
-                        }
-                        Label {
-                            text: qsTr("%1 km").arg((distance/1000).toLocaleString(Qt.locale() , "f", 2))
-                            font.pixelSize: Theme.fontSizeSmall
-                        }
-                    }
-                    Column {
-                        width: (contentItem.width - img.width)/3
-                        Label {
-                            text: qsTr("Time")
-                            font.pixelSize: Theme.fontSizeSmall
-                        }
-                        Label {
-                            text: Util.timeToString(time)
-                            font.pixelSize: Theme.fontSizeSmall
-                        }
-                    }
-                    Column {
-                        width: (contentItem.width - img.width)/3
-                        Label {
-                            text: qsTr("Speed")
-                            font.pixelSize: Theme.fontSizeSmall
-                        }
-                        Label {
-                            text: time > 0 ? qsTr("%1 km/h").arg((distance * 3.6 / time).toLocaleString(Qt.locale() , "f", 1)) : qsTr("N/A")
-                            font.pixelSize: Theme.fontSizeSmall
-                        }
-                    }
-                }
+                distance: model.distance
+                duration: time
+                date: model.date
             }
         }
+
         VerticalScrollDecorator {}
     }
 }
-
-

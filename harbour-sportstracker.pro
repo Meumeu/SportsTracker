@@ -24,7 +24,10 @@ OTHER_FILES += qml/harbour-sportstracker.qml \
     qml/pages/MainPage.qml \
     qml/pages/Tracking.qml \
     qml/pages/Settings.qml \
-    qml/util.js
+    qml/util.js \
+    qml/components/WorkoutSummary.qml \
+    translations/en.ts \
+    translations/fr.ts
 
 HEADERS += \
     src/workout.h \
@@ -33,3 +36,19 @@ HEADERS += \
     src/workoutsummarylist.h
 
 QT += positioning location xml
+
+TRANSLATIONS = \
+    translations/en.qm \
+    translations/fr.qm
+
+translation.files = TRANSLATIONS
+translation.path = /usr/share/${TARGET}
+INSTALLS += translation
+
+lupdate_only{
+SOURCES = \
+    qml/*.qml \
+    qml/components/*.qml \
+    qml/cover/*.qml \
+    qml/pages/*.qml
+}

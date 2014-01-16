@@ -37,19 +37,24 @@ CoverBackground {
     property Workout workout;
     property ApplicationWindow window;
     signal stopWorkout;
+    signal startWorkout;
 
     CoverPlaceholder {
-        icon.source: "image://theme/icon-camera-sports"
-        text: (workout.status == Workout.Tracking || workout.status == Workout.Paused) ?
-                  qsTr("%1\n%2 km\n%3 km/h")
+        //icon.source: "image://theme/icon-camera-sports"
+        Label {
+            text: (workout.status == Workout.Tracking || workout.status == Workout.Paused) ?
+                  "%1\n%2\n%3"
                     .arg(Util.timeToString(workout.duration))
-                    .arg((workout.distance / 1000).toLocaleString(Qt.locale() , "f", 2))
-                    .arg((workout.speed * 3.6).toLocaleString(Qt.locale() , "f", 1)) :
+                    .arg(Util.distanceToString(workout.distance))
+                    .arg(Util.speedToString(workout.speed)) :
                   ""
+            font.pixelSize: Theme.fontSizeLarge
+            horizontalAlignment: Text.AlignHCenter
+            width: parent.width
+        }
     }
 
     CoverActionList {
-        id: coverAction
         enabled: workout.status == Workout.Tracking || workout.status == Workout.Paused
 
         CoverAction {
@@ -60,6 +65,18 @@ CoverBackground {
         CoverAction {
             iconSource: workout.status == Workout.Tracking ? "image://theme/icon-cover-pause" : "image://theme/icon-camera-record"
             onTriggered: workout.status = (workout.status == Workout.Tracking ? Workout.Paused : Workout.Tracking)
+        }
+    }
+
+    CoverActionList {
+        enabled: workout.status == Workout.NotStarted || workout.status == Workout.Stopped
+
+        CoverAction {
+            iconSource: "image://theme/icon-camera-sports"
+            onTriggered: {
+                workout.reset();
+                workout.status = Workout.Tracking;
+            }
         }
     }
 }

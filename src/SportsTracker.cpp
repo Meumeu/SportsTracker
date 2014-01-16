@@ -51,6 +51,15 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType<WorkoutSummaryList>("SportsTracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList::provider);
     qRegisterMetaType<QGeoPositionInfo>("QGeoPositionInfo");
 
+
+    QGuiApplication * app =  SailfishApp::application(argc, argv);
+    QString locale = QLocale::system().name();
+
+    QTranslator translator;
+
+    translator.load(locale, SailfishApp::pathTo(QString("translations")).toLocalFile());
+    app->installTranslator(&translator);
     return SailfishApp::main(argc, argv);
+
 }
 

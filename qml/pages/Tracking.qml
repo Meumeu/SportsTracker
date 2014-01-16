@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import SportsTracker 1.0
+import QtLocation 5.0
 import "../util.js" as Util
 import "../cover"
 
@@ -15,27 +16,51 @@ Page {
     Component.onCompleted: {
         if (cover)
             cover.stopWorkout.connect(stopWorkout);
-        else
-            console.log("cover=", cover);
     }
+
 
     Column {
         anchors.fill: parent
         spacing: Theme.paddingMedium
+        visible: workout.status === Workout.NotStarted
 
         PageHeader {
             title: qsTr("Workout")
         }
 
-        Rectangle {
+        ComboBox {
+            label: qsTr("Sport: ")
+            menu: ContextMenu {
+                MenuItem { text: "Running" }
+                MenuItem { text: "Cycling" }
+                MenuItem { text: "Skiing" }
+            }
+        }
+    }
+
+    Column {
+        anchors.fill: parent
+        spacing: Theme.paddingMedium
+        visible: workout.status === Workout.Tracking || workout.status === Workout.Paused
+
+        PageHeader {
+            title: qsTr("Workout")
+        }
+
+
+        Map {
+
+            /* preferred: ["osm"]
+            required.mapping: Plugin.AnyMappingFeatures
+            required.geocoding: Plugin.AnyGeocodingFeatures */
             x: Theme.paddingLarge
             width: parent.width - 2 * x
             height: width * 0.75
+
         }
 
         Row {
             x: Theme.paddingLarge
-            visible: workout.status === Workout.Tracking || workout.status === Workout.Paused
 
             Column {
                 spacing: Theme.paddingMedium
