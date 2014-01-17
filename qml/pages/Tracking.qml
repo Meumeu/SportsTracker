@@ -153,9 +153,14 @@ Page {
         workout.status = Workout.Stopped;
         workout.save();
         if (page.status === PageStatus.Active)
+        {
             pageStack.navigateBack();
-
-        toBeReset = true;
+            toBeReset = true;
+        }
+        else
+        {
+            workout.reset();
+        }
     }
 
     Timer {

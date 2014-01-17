@@ -103,7 +103,7 @@ Page {
             width: parent.width
             contentHeight: workout.height + Theme.paddingLarge
 
-            ListView.onRemove: animateRemoval(listItem)
+            ListView.onRemove: animateRemoval(contentItem)
             function remove() {
                 remorseAction(qsTr("Deleting"), function()
                     {
