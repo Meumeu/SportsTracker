@@ -1,8 +1,23 @@
 #include "workoutsummarylist.h"
 #include <iostream>
 #include <algorithm>
+#include <memory>
 #include <QDir>
 #include <QStandardPaths>
+#include <QRunnable>
+#include <QThreadPool>
+
+
+WorkoutSummaryLoader::WorkoutSummaryLoader(QString filename):
+    _filename(filename)
+{
+}
+
+void WorkoutSummaryLoader::run()
+{
+    emit finished(WorkoutSummary(_filename));
+}
+
 
 enum class roles
 {
@@ -47,22 +62,32 @@ void WorkoutSummaryList::computeDistanceAndTime()
 
 void WorkoutSummaryList::addWorkout(QString filename)
 {
+    std::unique_ptr<WorkoutSummaryLoader> runnable(new WorkoutSummaryLoader(filename));
+
+    void(WorkoutSummaryList::*tmp)(WorkoutSummary) = &WorkoutSummaryList::addWorkout;
+    connect(runnable.get(), &WorkoutSummaryLoader::finished, this, tmp);
+
+    QThreadPool::globalInstance()->start(runnable.release());
+}
+
+void WorkoutSummaryList::addWorkout(WorkoutSummary workout)
+{
     auto i = std::find_if(_list.begin(), _list.end(),
-        [filename](WorkoutSummary& s)
+        [&workout](WorkoutSummary& s)
         {
-            return s.filename() <= filename;
+            return s.filename() <= workout.filename();
         });
 
     int idx = i - _list.begin();
-    if (i != _list.end() && i->filename() == filename)
+    if (i != _list.end() && i->filename() == workout.filename())
     {
-        *i = WorkoutSummary(filename);
+        *i = workout;
         emit dataChanged(index(idx), index(idx));
     }
     else
     {
         beginInsertRows(QModelIndex(), idx, idx);
-        _list.insert(i, WorkoutSummary(filename));
+        _list.insert(i, workout);
         endInsertRows();
     }
 

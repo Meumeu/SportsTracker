@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Workout>("SportsTracker", 1, 0, "Workout");
     qmlRegisterSingletonType<WorkoutSummaryList>("SportsTracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList::provider);
     qRegisterMetaType<QGeoPositionInfo>("QGeoPositionInfo");
-
+    qRegisterMetaType<WorkoutSummary>("WorkoutSummary");
 
     QGuiApplication * app =  SailfishApp::application(argc, argv);
     QString locale = QLocale::system().name();

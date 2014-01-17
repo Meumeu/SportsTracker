@@ -28,6 +28,11 @@ WorkoutSummary::WorkoutSummary(QString filename) :
     _time = metadataExt.firstChildElement("sport:duration").firstChild().toText().data().toDouble();
 }
 
+WorkoutSummary::WorkoutSummary()
+{
+
+}
+
 QString WorkoutSummary::sport() const
 {
     return _sport;

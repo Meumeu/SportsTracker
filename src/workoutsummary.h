@@ -8,6 +8,7 @@ class WorkoutSummary
 {
 public:
     explicit WorkoutSummary(QString filename);
+    WorkoutSummary();
 
     QString filename() const;
     QString sport() const;

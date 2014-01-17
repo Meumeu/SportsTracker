@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QAbstractListModel>
+#include <QRunnable>
 #include <vector>
 #include "workoutsummary.h"
 
@@ -12,6 +13,7 @@
 
 class QQmlEngine;
 class QJSEngine;
+
 
 class WorkoutSummaryList : public QAbstractListModel
 {
@@ -32,6 +34,7 @@ public:
     Q_PROPERTY(double totalTime READ totalTime NOTIFY totalTimeChanged)
 
     Q_INVOKABLE void addWorkout(QString filename);
+    Q_INVOKABLE void addWorkout(WorkoutSummary workout);
     Q_INVOKABLE void remove(int index);
 
     double totalDistance();
@@ -48,6 +51,19 @@ signals:
     void totalTimeChanged(double totalTime);
 
 public slots:
+};
+
+class WorkoutSummaryLoader : public QObject, public QRunnable
+{
+    Q_OBJECT
+    QString _filename;
+
+public:
+    WorkoutSummaryLoader(QString filename);
+
+    void run();
+signals:
+    void finished(WorkoutSummary summary);
 };
 
 #endif // WORKOUTSUMMARYLIST_H
