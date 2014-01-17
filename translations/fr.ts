@@ -12,8 +12,8 @@
         <location filename="../qml/pages/MainPage.qml" line="63"/>
         <source>%n workout(s)</source>
         <translation>
-            <numerusform>%n entrainement</numerusform>
-            <numerusform>%n entrainements</numerusform>
+            <numerusform>%n entraînement</numerusform>
+            <numerusform>%n entraînements</numerusform>
         </translation>
     </message>
     <message>
