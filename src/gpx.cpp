@@ -3,7 +3,8 @@
 #include <assert.h>
 #include <QDir>
 #include <QStandardPaths>
-#include <QDomDocument>
+#include <QSaveFile>
+#include <QXmlStreamWriter>
 #include <math.h>
 
 typedef std::tuple<double, double, double> vector3;
@@ -27,6 +28,11 @@ static vector3 wgs84_to_ecef(double lat, double lon, double alt)
     };
 }
 
+static vector3 wgs84_to_ecef(const QGeoCoordinate& coord)
+{
+    return wgs84_to_ecef(coord.latitude(), coord.longitude(), 0);
+}
+
 static double distance(const vector3& a, const vector3& b)
 {
     double x = std::get<0>(a) - std::get<0>(b);
@@ -36,8 +42,12 @@ static double distance(const vector3& a, const vector3& b)
     return sqrt(x * x + y * y + z * z);
 }
 
+double gpx::distance(const QGeoCoordinate& a, const QGeoCoordinate& b)
+{
+    return ::distance(wgs84_to_ecef(a), wgs84_to_ecef(b));
+}
 
-gpx::gpx() : _distance(0), _doc(nullptr)
+gpx::gpx() : _distance(0)
 {
 }
 
@@ -56,114 +66,51 @@ void gpx::addPoint(const QGeoPositionInfo &pt)
 
     if (!track.back().empty())
     {
-        vector3 a = wgs84_to_ecef(track.back().back().coordinate().latitude(), track.back().back().coordinate().longitude(), 0);
-        vector3 b = wgs84_to_ecef(pt.coordinate().latitude(), pt.coordinate().longitude(), 0);
-        _distance += ::distance(a, b);
+        _distance += distance(track.back().back().coordinate(), pt.coordinate());
     }
 
     std::cerr << "Added " << pt.coordinate().toString().toStdString() << std::endl;
     track.back().push_back(pt);
 }
 
-static void gpx_add_attribute(QDomDocument& doc, QDomElement& elem, const QGeoPositionInfo& pos, QGeoPositionInfo::Attribute a, const QString& node_name)
+void gpx::saveWaypoint(QXmlStreamWriter& doc, const QGeoPositionInfo& pt)
 {
-    if (!pos.hasAttribute(a)) return;
-
-    QDomElement n = doc.createElement(node_name);
-    n.appendChild(doc.createTextNode(QString::number(pos.attribute(a))));
-    elem.appendChild(n);
-}
-
-void gpx::saveWaypoint(QDomElement& trkseg, const QGeoPositionInfo& pt)
-{
-    assert(_doc != nullptr);
-    assert(trkseg.tagName() == "trkseg");
-
-    QDomElement trkpt = _doc->createElement("trkpt");
-    trkpt.setAttribute("lat", QString::number(pt.coordinate().latitude(), 'f', 10));
-    trkpt.setAttribute("lon", QString::number(pt.coordinate().longitude(), 'f', 10));
+    doc.writeStartElement("trkpt");
+    doc.writeAttribute("lat", QString::number(pt.coordinate().latitude(), 'f', 10));
+    doc.writeAttribute("lon", QString::number(pt.coordinate().longitude(), 'f', 10));
 
     if (pt.coordinate().type() == QGeoCoordinate::Coordinate3D)
-    {
-        QDomElement ele = _doc->createElement("ele");
-        ele.appendChild(_doc->createTextNode(QString::number(pt.coordinate().altitude())));
-        trkpt.appendChild(ele);
-    }
+        doc.writeTextElement("ele", QString::number(pt.coordinate().altitude()));
 
-    QDomElement time = _doc->createElement("time");
-    time.appendChild(_doc->createTextNode(pt.timestamp().toUTC().toString("yyyy'-'MM'-'dd'T'hh':'mm':'ss'Z'")));
-    trkpt.appendChild(time);
+    doc.writeTextElement("time", pt.timestamp().toUTC().toString("yyyy'-'MM'-'dd'T'hh':'mm':'ss'Z'"));
 
+    if (pt.hasAttribute(QGeoPositionInfo::MagneticVariation))
+        doc.writeTextElement("magvar", QString::number(pt.attribute(QGeoPositionInfo::MagneticVariation)));
 
-    gpx_add_attribute(*_doc, trkpt, pt, QGeoPositionInfo::MagneticVariation, "magvar");
-
-    QDomElement fix = _doc->createElement("fix");
     switch(pt.coordinate().type())
     {
-        case QGeoCoordinate::Coordinate3D:
-            fix.appendChild(_doc->createTextNode("3d"));
-            trkpt.appendChild(fix);
-            break;
-        case QGeoCoordinate::Coordinate2D:
-            fix.appendChild(_doc->createTextNode("2d"));
-            trkpt.appendChild(fix);
-            break;
-        case QGeoCoordinate::InvalidCoordinate:
-            fix.appendChild(_doc->createTextNode("none"));
-            trkpt.appendChild(fix);
-            break;
+    case QGeoCoordinate::Coordinate3D:
+        doc.writeTextElement("fix", "3d");
+        break;
+    case QGeoCoordinate::Coordinate2D:
+        doc.writeTextElement("fix", "2d");
+        break;
+    case QGeoCoordinate::InvalidCoordinate:
+        doc.writeTextElement("fix", "none");
+        break;
     }
 
-    gpx_add_attribute(*_doc, trkpt, pt, QGeoPositionInfo::HorizontalAccuracy, "hdop");
-    gpx_add_attribute(*_doc, trkpt, pt, QGeoPositionInfo::VerticalAccuracy, "vdop");
+    if (pt.hasAttribute(QGeoPositionInfo::HorizontalAccuracy))
+        doc.writeTextElement("hdop", QString::number(pt.attribute(QGeoPositionInfo::HorizontalAccuracy)));
 
-    QDomElement ext = _doc->createElement("extensions");
+    if (pt.hasAttribute(QGeoPositionInfo::VerticalAccuracy))
+        doc.writeTextElement("vdop", QString::number(pt.attribute(QGeoPositionInfo::VerticalAccuracy)));
+
+    doc.writeStartElement("extensions");
     if (pt.hasAttribute(QGeoPositionInfo::GroundSpeed))
-    {
-        QDomElement speed = _doc->createElement("sport:groundspeed");
-        speed.appendChild(_doc->createTextNode(QString::number(pt.attribute(QGeoPositionInfo::GroundSpeed))));
-        ext.appendChild(speed);
-    }
-
-    if (ext.hasChildNodes())
-        trkpt.appendChild(ext);
-
-    trkseg.appendChild(trkpt);
-}
-
-void gpx::saveTrackSegment(QDomElement& trk, const TrackSegment& segment)
-{
-    assert(_doc != nullptr);
-    assert(trk.tagName() == "trk");
-
-    QDomElement trkseg = _doc->createElement("trkseg");
-
-    for(const QGeoPositionInfo& i: segment)
-    {
-        saveWaypoint(trkseg, i);
-    }
-
-    trk.appendChild(trkseg);
-}
-
-void gpx::saveMetadataExt(QDomElement& metadataExt, const QString& name, const QString& value)
-{
-    assert(_doc != nullptr);
-    assert(metadataExt.tagName() == "extensions");
-
-    QDomElement ext = _doc->createElement("sport:" + name);
-    ext.appendChild(_doc->createTextNode(value));
-    metadataExt.appendChild(ext);
-}
-
-void gpx::saveMetadata(QDomElement& metadata, const QString& name, const QString& value)
-{
-    assert(_doc != nullptr);
-    assert(metadata.tagName() == "metadata");
-
-    QDomElement ext = _doc->createElement(name);
-    ext.appendChild(_doc->createTextNode(value));
-    metadata.appendChild(ext);
+        doc.writeTextElement("http://sportstracker.meumeu.org/", "groundspeed", QString::number(pt.attribute(QGeoPositionInfo::GroundSpeed)));
+    doc.writeEndElement();
+    doc.writeEndElement();
 }
 
 QString gpx::save(QDateTime start_date, double duration)
@@ -173,44 +120,44 @@ QString gpx::save(QDateTime start_date, double duration)
     QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
     QDir(path).mkpath(".");
 
-    QFile file(path + QDir::separator() + filename);
-
-    _doc = new QDomDocument;
-    _doc->appendChild(_doc->createProcessingInstruction("xml", R"(version="1.0")"));
-
-    QDomElement root = _doc->createElement("gpx");
-    root.setAttribute("xmlns", "http://www.topografix.com/GPX/1/1");
-    root.setAttribute("xmlns:sport", "http://sportstracker.meumeu.org/");
-    root.setAttribute("version", "1.1");
-    root.setAttribute("creator", "http://sportstracker.meumeu.org/");
-
-    QDomElement metadata = _doc->createElement("metadata");
-    QDomElement metadataExt = _doc->createElement("extensions");
-    root.appendChild(metadata);
-    metadata.appendChild(metadataExt);
-
-    saveMetadata(metadata, "time", start_date.toString("yyyy'-'MM'-'dd'T'hh':'mm':'ss'Z'"));
-    saveMetadataExt(metadataExt, "duration", QString::number(duration));
-    saveMetadataExt(metadataExt, "distance", QString::number(_distance));
-    saveMetadataExt(metadataExt, "sport", "foobar");
-
-
-    QDomElement trk = _doc->createElement("trk");
-
-    for(const auto& i: track)
-    {
-        saveTrackSegment(trk, i);
-    }
-
-    root.appendChild(trk);
-    _doc->appendChild(root);
+    QSaveFile file(path + QDir::separator() + filename);
 
     std::cerr << "Saving to " << file.fileName().toStdString() << std::endl;
     file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
-    qint64 rc = file.write(_doc->toByteArray());
-    if (rc == -1)
-        std::cerr << "Error while saving GPX file: " << file.errorString().toStdString() << std::endl;
-    file.close();
+    QXmlStreamWriter doc(&file);
+
+    doc.writeStartDocument();
+    doc.writeStartElement("gpx");
+    doc.writeDefaultNamespace("http://www.topografix.com/GPX/1/1");
+    doc.writeNamespace("http://sportstracker.meumeu.org/");
+    doc.writeAttribute("version", "1.1");
+    doc.writeAttribute("creator", "http://sportstracker.meumeu.org/");
+
+    doc.writeStartElement("metadata");
+    doc.writeTextElement("time", start_date.toString("yyyy'-'MM'-'dd'T'hh':'mm':'ss'Z'"));
+    doc.writeStartElement("extensions");
+    doc.writeTextElement("http://sportstracker.meumeu.org/", "duration", QString::number(duration));
+    doc.writeTextElement("http://sportstracker.meumeu.org/", "distance", QString::number(_distance));
+    doc.writeTextElement("http://sportstracker.meumeu.org/", "sport", "foobar");
+    doc.writeEndElement();
+    doc.writeEndElement();
+
+    doc.writeStartElement("trk");
+    for(const auto& i: track)
+    {
+        doc.writeStartElement("trkseg");
+        for(const QGeoPositionInfo& j: i)
+        {
+            saveWaypoint(doc, j);
+        }
+        doc.writeEndElement();
+    }
+    doc.writeEndElement();
+
+    doc.writeEndElement();
+    doc.writeEndDocument();
+
+    file.commit();
 
     return filename;
 }

@@ -2,9 +2,10 @@
 #define GPX_H
 
 #include <QDateTime>
-#include <QDomDocument>
 #include <QtPositioning/QGeoPositionInfo>
 #include <vector>
+
+class QXmlStreamWriter;
 
 class gpx
 {
@@ -19,12 +20,10 @@ public:
 
     QString save(QDateTime start_date, double duration);
 
+    static double distance(const QGeoCoordinate& a, const QGeoCoordinate& b);
+
 private:
-    QDomDocument * _doc;
-    void saveTrackSegment(QDomElement& trk, const TrackSegment& segment);
-    void saveWaypoint(QDomElement& trkseg, const QGeoPositionInfo& pt);
-    void saveMetadataExt(QDomElement& metadataExt, const QString& name, const QString& value);
-    void saveMetadata(QDomElement& metadata, const QString& name, const QString& value);
+    void saveWaypoint(QXmlStreamWriter& doc, const QGeoPositionInfo& pt);
 };
 
 #endif // GPX_H
