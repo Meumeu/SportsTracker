@@ -15,14 +15,21 @@ WorkoutSummaryLoader::WorkoutSummaryLoader(QString filename):
 
 void WorkoutSummaryLoader::run()
 {
-    emit finished(WorkoutSummary(_filename));
+    try
+    {
+        emit finished(WorkoutSummary(_filename));
+    }
+    catch(...)
+    {
+        // TODO
+    }
 }
 
 
 enum class roles
 {
     distance = Qt::UserRole,
-    time,
+    duration,
     date,
     sport,
     filename
@@ -53,7 +60,7 @@ void WorkoutSummaryList::computeDistanceAndTime()
     for(WorkoutSummary& i: _list)
     {
         _totalDistance += i.distance();
-        _totalTime += i.time();
+        _totalTime += i.duration();
     }
 
     emit totalDistanceChanged(_totalDistance);
@@ -126,8 +133,8 @@ QVariant WorkoutSummaryList::data(const QModelIndex &index, int role) const
     {
     case roles::distance:
         return _list[index.row()].distance();
-    case roles::time:
-        return _list[index.row()].time();
+    case roles::duration:
+        return _list[index.row()].duration();
     case roles::date:
         return _list[index.row()].date();
     case roles::sport:
@@ -148,7 +155,7 @@ QHash<int, QByteArray> WorkoutSummaryList::roleNames() const
 {
     QHash<int, QByteArray> ret;
     ret[(int)roles::distance] = "distance";
-    ret[(int)roles::time] = "time";
+    ret[(int)roles::duration] = "duration";
     ret[(int)roles::date] = "date";
     ret[(int)roles::sport] = "sport";
     ret[(int)roles::filename] = "filename";

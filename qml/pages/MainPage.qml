@@ -30,7 +30,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import SportsTracker 1.0
+import harbour.sportstracker.SportsTracker 1.0
 import "../components"
 import "../util.js" as Util
 
@@ -104,12 +104,15 @@ Page {
             contentHeight: workout.height + Theme.paddingLarge
 
             ListView.onRemove: animateRemoval(contentItem)
+
             function remove() {
                 remorseAction(qsTr("Deleting"), function()
                     {
                         WorkoutSummaryList.remove(index)
                     })
             }
+
+            onClicked: pageStack.push(Qt.resolvedUrl("WorkoutDetails.qml"), { filename: model.filename })
 
             Component {
                 id: contextMenu
@@ -131,7 +134,7 @@ Page {
                 y: Theme.paddingLarge / 2
 
                 distance: model.distance
-                duration: time
+                duration: model.duration
                 date: model.date
             }
         }

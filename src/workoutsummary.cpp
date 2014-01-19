@@ -1,41 +1,37 @@
 #include "workoutsummary.h"
+#include "gpx.h"
 #include <QDir>
 #include <QStandardPaths>
-#include <QDomDocument>
+#include <QXmlStreamReader>
 #include <QDateTime>
-
-WorkoutSummary::WorkoutSummary(QString filename) :
-    _filename(filename)
-{
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QDir::separator() + filename;
-
-    QFile file(path);
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    QDomDocument doc;
-    doc.setContent(&file);
-    file.close();
-
-    QDomElement root = doc.firstChildElement("gpx");
-    if (root.isNull()) return;
-
-    QDomElement metadata = root.firstChildElement("metadata");
-    QDomElement metadataExt = metadata.firstChildElement("extensions");
-
-    _sport = metadataExt.firstChildElement("sport:sport").firstChild().toText().data();
-    QString start_date = metadata.firstChildElement("time").firstChild().toText().data();
-    _date = QDateTime::fromString(start_date, Qt::ISODate);
-    _distance = metadataExt.firstChildElement("sport:distance").firstChild().toText().data().toDouble();
-    _time = metadataExt.firstChildElement("sport:duration").firstChild().toText().data().toDouble();
-}
-
-WorkoutSummary::WorkoutSummary()
-{
-
-}
+#include <QGeoPositionInfo>
+#include <QtDebug>
+#include <iostream>
+#include <stdexcept>
 
 QString WorkoutSummary::sport() const
 {
     return _sport;
+}
+
+void WorkoutSummary::setSport(const QString & sport)
+{
+    _sport = sport;
+}
+
+void WorkoutSummary::setDate(QDateTime date)
+{
+    _date = date;
+}
+
+void WorkoutSummary::setDistance(double distance)
+{
+    _distance = distance;
+}
+
+void WorkoutSummary::setDuration(double time)
+{
+    _duration = time;
 }
 
 QDateTime WorkoutSummary::date() const
@@ -48,12 +44,36 @@ double WorkoutSummary::distance() const
     return _distance;
 }
 
-double WorkoutSummary::time() const
+double WorkoutSummary::duration() const
 {
-    return _time;
+    return _duration;
 }
 
 QString WorkoutSummary::filename() const
 {
     return _filename;
 }
+
+WorkoutSummary::WorkoutSummary(QString filename) :
+    _filename(filename)
+{
+    // TODO: cache
+    gpx tmp;
+    tmp.load(filename);
+
+    _sport = tmp.sport();
+    _date = tmp.startDate();
+    _distance = tmp.distance();
+    _duration = tmp.duration();
+}
+
+WorkoutSummary::WorkoutSummary() :
+    _filename(),
+    _sport(),
+    _date(),
+    _distance(0),
+    _duration(0)
+{
+}
+
+

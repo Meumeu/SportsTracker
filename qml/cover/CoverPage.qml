@@ -30,7 +30,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import SportsTracker 1.0
+import harbour.sportstracker.SportsTracker 1.0
 import "../util.js" as Util
 
 CoverBackground {
@@ -73,10 +73,7 @@ CoverBackground {
 
         CoverAction {
             iconSource: "image://theme/icon-camera-sports"
-            onTriggered: {
-                workout.reset();
-                workout.status = Workout.Tracking;
-            }
+            onTriggered: startWorkout();
         }
     }
 }

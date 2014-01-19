@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import SportsTracker 1.0
+import harbour.sportstracker.SportsTracker 1.0
 import QtLocation 5.0
 import "../util.js" as Util
 import "../cover"
@@ -12,12 +12,28 @@ Page {
     property bool toBeReset: false;
 
     signal stopWorkout;
+    signal startWorkout;
 
     Component.onCompleted: {
         if (cover)
+        {
             cover.stopWorkout.connect(stopWorkout);
+            cover.startWorkout.connect(startWorkout);
+        }
     }
 
+    ListModel {
+        id: sportsList
+        ListElement {
+            name: QT_TR_NOOP("Running")
+        }
+        ListElement {
+            name: QT_TR_NOOP("Cycling")
+        }
+        ListElement {
+            name: QT_TR_NOOP("Skiing")
+        }
+    }
 
     Column {
         anchors.fill: parent
@@ -29,11 +45,15 @@ Page {
         }
 
         ComboBox {
+            id: sportsCombo
             label: qsTr("Sport: ")
             menu: ContextMenu {
-                MenuItem { text: "Running" }
-                MenuItem { text: "Cycling" }
-                MenuItem { text: "Skiing" }
+                Repeater {
+                    model: sportsList
+                    delegate: MenuItem {
+                        text: qsTr(name)
+                    }
+                }
             }
         }
     }
@@ -119,7 +139,7 @@ Page {
         Button {
             visible: workout.status === Workout.NotStarted
             text: qsTr("Start")
-            onClicked: workout.status = Workout.Tracking
+            onClicked: startWorkout()
         }
 
         Button {
@@ -161,6 +181,12 @@ Page {
         {
             workout.reset();
         }
+    }
+
+    onStartWorkout: {
+        workout.reset();
+        workout.sport = sportsList.get(sportsCombo.currentIndex).name
+        workout.status = Workout.Tracking;
     }
 
     Timer {

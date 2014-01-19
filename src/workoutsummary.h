@@ -14,14 +14,19 @@ public:
     QString sport() const;
     QDateTime date() const;
     double distance() const;
-    double time() const;
+    double duration() const;
+
+    void setSport(const QString&);
+    void setDate(QDateTime);
+    void setDistance(double);
+    void setDuration(double);
 
 private:
     QString _filename;
     QString _sport;
     QDateTime _date;
     double _distance;
-    double _time;
+    double _duration;
 };
 
 #endif // WORKOUTSUMMARY_H

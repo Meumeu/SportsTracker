@@ -26,6 +26,7 @@ public:
     Q_PROPERTY(Status status READ status WRITE setStatus NOTIFY statusChanged)
     Q_PROPERTY(QString lastPosition READ lastPosition NOTIFY lastPositionChanged)
     Q_PROPERTY(double duration READ duration NOTIFY durationChanged)
+    Q_PROPERTY(QString sport READ sport WRITE setSport NOTIFY sportChanged)
 
     Q_INVOKABLE void save();
     Q_INVOKABLE void reset();
@@ -36,19 +37,20 @@ public:
     Status status() const;
     const QString& lastPosition() const;
     double duration() const;
+    const QString& sport() const;
 
     void setStatus(Status status);
+    void setSport(const QString& _sport);
 
 private:
     gpx track;
-    double _distance;
     double _speed;
     double _avgSpeed;
     Status _status;
     QString _lastPosition;
-    QDateTime _start_date;
     QDateTime _pause_date;
     qint64 _duration;
+    QString _sport;
 
     QTimer * _timer;
     QGeoPositionInfoSource * position_source;
@@ -64,6 +66,7 @@ signals:
     void statusChanged(Status status);
     void lastPositionChanged(const QString& position);
     void durationChanged(double duration);
+    void sportChanged(const QString& sport);
     void saved(QString filename);
 
 public slots:

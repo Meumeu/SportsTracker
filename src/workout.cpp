@@ -7,9 +7,7 @@
 
 Workout::Workout(QObject *parent) :
     QObject(parent),
-    _distance(0),
     _status(NotStarted),
-    _start_date(QDateTime{}),
     _pause_date(QDateTime{}),
     _duration(0),
     _timer(new QTimer(this)),
@@ -30,14 +28,12 @@ Workout::Workout(QObject *parent) :
 
 void Workout::reset()
 {
-    _distance = 0;
     _status = NotStarted;
     track = gpx{};
-    _start_date = QDateTime{};
     _pause_date = QDateTime{};
     _duration = 0;
 
-    emit distanceChanged(_distance);
+    emit distanceChanged(track.distance());
     emit statusChanged(_status);
     emit speedChanged(0);
     emit durationChanged(0);
@@ -51,8 +47,7 @@ void Workout::addPoint(const QGeoPositionInfo& position)
         {
             track.addPoint(position);
 
-            _distance = track.distance();
-            emit distanceChanged(_distance);
+            emit distanceChanged(track.distance());
 
             if (position.hasAttribute(QGeoPositionInfo::GroundSpeed))
             {
@@ -93,8 +88,9 @@ void Workout::setStatus(Status status)
     {
         if (_status == NotStarted)
         {
-            _start_date = QDateTime::currentDateTimeUtc();
-            _pause_date = _start_date;
+            track.setStartDate(QDateTime::currentDateTimeUtc());
+            track.setSport(_sport);
+            _pause_date = track.startDate();
         }
         else if (_status == Paused)
         {
@@ -126,17 +122,28 @@ void Workout::setStatus(Status status)
     emit statusChanged(status);
 }
 
+void Workout::setSport(const QString &sport)
+{
+    if (_sport != sport && _status == NotStarted)
+    {
+        _sport = sport;
+        emit sportChanged(sport);
+        std::cerr << "sport changed to "<< sport.toStdString() << std::endl;
+    }
+}
+
 void Workout::computeAvgSpeed()
 {
-    _avgSpeed = _distance / (_duration * 0.001);
+    _avgSpeed = track.distance() / (_duration * 0.001);
     emit avgSpeedChanged(_avgSpeed);
 }
 
 void Workout::save()
 {
-    if (_start_date.isValid())
+    if (track.startDate().isValid())
     {
-        emit saved(track.save(_start_date, _duration * 0.001));
+        track.setDuration(_duration * 0.001);
+        emit saved(track.save());
     }
 }
 
@@ -147,7 +154,7 @@ const QString& Workout::lastPosition() const
 
 double Workout::distance() const
 {
-    return _distance;
+    return track.distance();
 }
 
 double Workout::speed() const
@@ -168,4 +175,9 @@ Workout::Status Workout::status() const
 double Workout::duration() const
 {
     return _duration * 0.001;
+}
+
+const QString& Workout::sport() const
+{
+    return _sport;
 }
