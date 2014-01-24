@@ -18,7 +18,8 @@ SOURCES += src/SportsTracker.cpp \
     src/gpxloader.cpp \
     src/gpxwriter.cpp \
     src/qmlplot.cpp \
-    src/qmlplotdata.cpp
+    src/qmlplotdata.cpp \
+    src/workoutdetails.cpp
 
 OTHER_FILES += qml/harbour-sportstracker.qml \
     qml/cover/CoverPage.qml \
@@ -32,7 +33,7 @@ OTHER_FILES += qml/harbour-sportstracker.qml \
     qml/components/WorkoutSummary.qml \
     translations/en.ts \
     translations/fr.ts \
-    qml/pages/WorkoutDetails.qml
+    qml/pages/WorkoutDetailsPage.qml
 
 HEADERS += \
     src/workout.h \
@@ -40,7 +41,8 @@ HEADERS += \
     src/workoutsummary.h \
     src/workoutsummarylist.h \
     src/qmlplot.h \
-    src/qmlplotdata.h
+    src/qmlplotdata.h \
+    src/workoutdetails.h
 
 QT += positioning location sql
 

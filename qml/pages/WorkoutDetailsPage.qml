@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import harbour.sportstracker.SportsTracker 1.0
+import harbour.sportstracker 1.0
 import "../util.js" as Util
 
 Page {
@@ -20,7 +20,9 @@ Page {
             Plot {
                 width: parent.width
                 height: width
-                data: [ PlotData {} ]
+                WorkoutDetails {
+                    filename: page.filename
+                }
             }
 
             /*Row {

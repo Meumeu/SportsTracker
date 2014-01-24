@@ -1,13 +1,9 @@
 #include "qmlplotdata.h"
 
 QmlPlotData::QmlPlotData(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    _colour(Qt::white)
 {
-    _data.emplace_back(1, 1);
-    _data.emplace_back(2, 3);
-    _data.emplace_back(3, 2);
-    _data.emplace_back(4, 4);
-    _colour = Qt::white;
 }
 
 void QmlPlotData::setColour(QColor colour)

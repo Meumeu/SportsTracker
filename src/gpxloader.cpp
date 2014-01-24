@@ -59,6 +59,30 @@ static void parse_metadata(gpx& ws, QXmlStreamReader& doc)
     }
 }
 
+static void parse_trkpt_extensions(QXmlStreamReader& doc, QGeoPositionInfo& pt)
+{
+    while(!doc.atEnd())
+    {
+        doc.readNext();
+        if (doc.isEndElement()) break;
+        if (doc.isWhitespace()) continue;
+
+        if (doc.isStartElement() && doc.name() == "groundspeed" && doc.namespaceUri() == "http://sportstracker.meumeu.org/")
+        {
+            bool ok;
+            pt.setAttribute(QGeoPositionInfo::GroundSpeed, QLocale::c().toDouble(doc.readElementText(), &ok));
+            if (!ok)
+            {
+                doc.raiseError("Invalid ground speed");
+            }
+        }
+        else if (doc.isStartElement())
+        {
+            doc.skipCurrentElement();
+        }
+    }
+}
+
 static QGeoPositionInfo parse_trkpt(QXmlStreamReader& doc)
 {
     QGeoPositionInfo pt;
@@ -97,6 +121,10 @@ static QGeoPositionInfo parse_trkpt(QXmlStreamReader& doc)
                 doc.raiseError("Invalid altitude");
             }
         }
+        else if (doc.isStartElement() && doc.name() == "time")
+        {
+            pt.setTimestamp(QDateTime::fromString(doc.readElementText(), Qt::ISODate));
+        }
         else if (doc.isStartElement() && doc.name() == "hdop")
         {
             pt.setAttribute(QGeoPositionInfo::HorizontalAccuracy, QLocale::c().toDouble(doc.readElementText(), &ok));
@@ -112,6 +140,10 @@ static QGeoPositionInfo parse_trkpt(QXmlStreamReader& doc)
             {
                 doc.raiseError("Invalid vdop");
             }
+        }
+        else if (doc.isStartElement() && doc.name() == "extensions")
+        {
+            parse_trkpt_extensions(doc, pt);
         }
         else if (doc.isStartElement())
         {

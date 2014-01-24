@@ -16,7 +16,7 @@ static void save_waypoint(QXmlStreamWriter& doc, const QGeoPositionInfo& pt)
     if (pt.coordinate().type() == QGeoCoordinate::Coordinate3D)
         doc.writeTextElement("ele", QString::number(pt.coordinate().altitude()));
 
-    doc.writeTextElement("time", pt.timestamp().toUTC().toString("yyyy'-'MM'-'dd'T'hh':'mm':'ss'Z'"));
+    doc.writeTextElement("time", pt.timestamp().toUTC().toString("yyyy'-'MM'-'dd'T'hh':'mm':'ss','zzz'Z'"));
 
     if (pt.hasAttribute(QGeoPositionInfo::MagneticVariation))
         doc.writeTextElement("magvar", QString::number(pt.attribute(QGeoPositionInfo::MagneticVariation)));

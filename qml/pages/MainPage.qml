@@ -30,7 +30,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import harbour.sportstracker.SportsTracker 1.0
+import harbour.sportstracker 1.0
 import "../components"
 import "../util.js" as Util
 
@@ -112,7 +112,7 @@ Page {
                     })
             }
 
-            onClicked: pageStack.push(Qt.resolvedUrl("WorkoutDetails.qml"), { filename: model.filename })
+            onClicked: pageStack.push(Qt.resolvedUrl("WorkoutDetailsPage.qml"), { filename: model.filename })
 
             Component {
                 id: contextMenu

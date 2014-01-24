@@ -35,6 +35,7 @@
 #include <sailfishapp.h>
 #include "workout.h"
 #include "workoutsummarylist.h"
+#include "workoutdetails.h"
 #include "qmlplot.h"
 #include "qmlplotdata.h"
 
@@ -49,10 +50,11 @@ int main(int argc, char *argv[])
     //
     // To display the view, call "show()" (will show fullscreen on device).
 
-    qmlRegisterType<Workout>("harbour.sportstracker.SportsTracker", 1, 0, "Workout");
-    qmlRegisterType<QmlPlotData>("harbour.sportstracker.SportsTracker", 1, 0, "PlotData");
-    qmlRegisterType<QmlPlot>("harbour.sportstracker.SportsTracker", 1, 0, "Plot");
-    qmlRegisterSingletonType<WorkoutSummaryList>("harbour.sportstracker.SportsTracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList::provider);
+    qmlRegisterType<Workout>("harbour.sportstracker", 1, 0, "Workout");
+    qmlRegisterUncreatableType<QmlPlotData>("harbour.sportstracker", 1, 0, "PlotData", "PlotData must be created from C++ code");
+    qmlRegisterType<QmlPlot>("harbour.sportstracker", 1, 0, "Plot");
+    qmlRegisterType<WorkoutDetails>("harbour.sportstracker", 1, 0, "WorkoutDetails");
+    qmlRegisterSingletonType<WorkoutSummaryList>("harbour.sportstracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList::provider);
     qRegisterMetaType<QGeoPositionInfo>("QGeoPositionInfo");
     qRegisterMetaType<WorkoutSummary>("WorkoutSummary");
 
@@ -63,6 +65,7 @@ int main(int argc, char *argv[])
 
     translator.load(locale, SailfishApp::pathTo(QString("translations")).toLocalFile());
     app->installTranslator(&translator);
+
     return SailfishApp::main(argc, argv);
 
 }
