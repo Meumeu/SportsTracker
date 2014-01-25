@@ -32,17 +32,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/MainPage.qml" line="108"/>
+        <location filename="../qml/pages/MainPage.qml" line="109"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/MainPage.qml" line="118"/>
+        <location filename="../qml/pages/MainPage.qml" line="121"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/MainPage.qml" line="122"/>
+        <location filename="../qml/pages/MainPage.qml" line="125"/>
         <source>Share</source>
         <translation type="unfinished"></translation>
     </message>
@@ -59,81 +59,129 @@
     <name>Tracking</name>
     <message>
         <location filename="../qml/pages/Tracking.qml" line="28"/>
-        <location filename="../qml/pages/Tracking.qml" line="38"/>
+        <source>Running</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/Tracking.qml" line="31"/>
+        <source>Cycling</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/Tracking.qml" line="34"/>
+        <source>Skiing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/Tracking.qml" line="44"/>
+        <location filename="../qml/pages/Tracking.qml" line="67"/>
         <source>Workout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/Tracking.qml" line="60"/>
+        <location filename="../qml/pages/Tracking.qml" line="49"/>
+        <source>Sport: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/Tracking.qml" line="89"/>
         <source>Time: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/Tracking.qml" line="65"/>
+        <location filename="../qml/pages/Tracking.qml" line="94"/>
         <source>Current speed: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/Tracking.qml" line="70"/>
+        <location filename="../qml/pages/Tracking.qml" line="99"/>
         <source>Average speed: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/Tracking.qml" line="75"/>
+        <location filename="../qml/pages/Tracking.qml" line="104"/>
         <source>Distance: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/Tracking.qml" line="88"/>
-        <location filename="../qml/pages/Tracking.qml" line="93"/>
+        <location filename="../qml/pages/Tracking.qml" line="117"/>
+        <location filename="../qml/pages/Tracking.qml" line="122"/>
         <source>%1 km/h</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/Tracking.qml" line="98"/>
+        <location filename="../qml/pages/Tracking.qml" line="127"/>
         <source>%1 km</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/Tracking.qml" line="112"/>
+        <location filename="../qml/pages/Tracking.qml" line="141"/>
         <source>Start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/Tracking.qml" line="118"/>
+        <location filename="../qml/pages/Tracking.qml" line="147"/>
         <source>Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/Tracking.qml" line="124"/>
+        <location filename="../qml/pages/Tracking.qml" line="153"/>
         <source>Pause</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/Tracking.qml" line="130"/>
+        <location filename="../qml/pages/Tracking.qml" line="159"/>
         <source>Resume</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WorkoutDetailsPage</name>
+    <message>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="28"/>
+        <source>Workout details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="64"/>
+        <source>Distance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="72"/>
+        <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="80"/>
+        <source>Average speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="88"/>
+        <source>Maximum speed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>WorkoutSummary</name>
     <message>
-        <location filename="../qml/components/WorkoutSummary.qml" line="28"/>
+        <location filename="../qml/components/WorkoutSummary.qml" line="29"/>
         <source>Distance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/WorkoutSummary.qml" line="40"/>
-        <source>Time</source>
+        <location filename="../qml/components/WorkoutSummary.qml" line="41"/>
+        <source>Duration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/WorkoutSummary.qml" line="52"/>
+        <location filename="../qml/components/WorkoutSummary.qml" line="53"/>
         <source>Speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/components/WorkoutSummary.qml" line="57"/>
+        <location filename="../qml/components/WorkoutSummary.qml" line="58"/>
         <source>N/A</source>
         <translation type="unfinished"></translation>
     </message>

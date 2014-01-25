@@ -2,28 +2,72 @@
 #include "gpx.h"
 #include "qmlplotdata.h"
 
+#include <memory>
 #include <QQuickPaintedItem>
-#include <iostream>
+#include <QThread>
+#include <QThreadPool>
 
 WorkoutDetails::WorkoutDetails(QObject *parent) :
     QObject(parent),
-    _speed(new QmlPlotData(this)),
-    _altitude(new QmlPlotData(this))
+    _loading(true)
 {
 }
 
 void WorkoutDetails::setFilename(QString filename)
 {
-    _data.load(filename);
+    _filename = filename;
+    _loading = true;
+    emit filenameChanged(filename);
+    emit loadingChanged(_loading);
+
+    std::unique_ptr<WorkoutDetailsLoader> runnable(new WorkoutDetailsLoader(filename));
+    connect(runnable.get(), &WorkoutDetailsLoader::finished, this, &WorkoutDetails::setData);
+    QThreadPool::globalInstance()->start(runnable.release());
+}
+
+void WorkoutDetails::setData(Data data)
+{
+    delete _data.altitude;
+    delete _data.speed;
+
+    _data = data;
+
+    _data.altitude->setParent(this);
+    _data.altitude->setAxisId(QmlPlotData::Right);
+
+    _data.speed->setParent(this);
+    _data.speed->setAxisId(QmlPlotData::Left);
+
+    _loading = false;
+
+    emit speedChanged(data.speed);
+    emit altitudeChanged(data.altitude);
+    emit sportChanged(data.sport);
+    emit durationChanged(data.duration);
+    emit distanceChanged(data.distance);
+    emit maxSpeedChanged(data.maxSpeed);
+    emit dateChanged(data.date);
+    emit loadingChanged(_loading);
+}
+
+WorkoutDetailsLoader::WorkoutDetailsLoader(QString filename) : _filename(filename)
+{
+    data.altitude = new QmlPlotData;
+    data.speed = new QmlPlotData;
+}
+
+void WorkoutDetailsLoader::run()
+{
+    gpx file;
+    file.load(_filename);
 
     std::vector<QVector2D> speed_data;
     std::vector<QVector2D> altitude_data;
 
-    const gpx::Track& track = _data.track();
+    const gpx::Track& track = file.track();
 
-    float maxspeed = 0;
-
-    float duration = 0;
+    data.maxSpeed = 0;
+    data.duration = 0;
     int n = 0;
     for(const gpx::TrackSegment& i: track)
     {
@@ -35,13 +79,12 @@ void WorkoutDetails::setFilename(QString filename)
         for(const QGeoPositionInfo& j: i)
         {
             ++m;
-            float t = duration + t0.msecsTo(j.timestamp()) / 1000.0;
-            std::cerr << "t=" << j.timestamp().toString().toStdString()<< ", " << t << std::endl;
+            float t = data.duration + t0.msecsTo(j.timestamp()) / 1000.0;
 
             if (j.hasAttribute(QGeoPositionInfo::GroundSpeed))
             {
                 speed_data.emplace_back(t, j.attribute(QGeoPositionInfo::GroundSpeed));
-                maxspeed = std::max<float>(maxspeed, j.attribute(QGeoPositionInfo::GroundSpeed));
+                data.maxSpeed = std::max<float>(data.maxSpeed, j.attribute(QGeoPositionInfo::GroundSpeed));
             }
 
             if (j.coordinate().type() == QGeoCoordinate::Coordinate3D)
@@ -50,25 +93,15 @@ void WorkoutDetails::setFilename(QString filename)
             }
         }
 
-        std::cerr << m << " points" << std::endl;
-        duration += t0.msecsTo(i.back().timestamp()) / 1000;
+        data.duration += t0.msecsTo(i.back().timestamp()) / 1000;
     }
 
-    std::cerr << n << " track segment(s)" << std::endl;
-    std::cerr << "Max speed: " << maxspeed << " m/s" << std::endl;
+    data.altitude->setData(std::move(altitude_data));
+    data.speed->setData(std::move(speed_data));
 
-    _speed->setData(speed_data);
-    _altitude->setData(altitude_data);
-    _filename = filename;
+    data.date = file.startDate();
+    data.distance = file.distance();
+    data.sport = file.sport();
 
-    emit speedChanged(_speed);
-    emit altitudeChanged(_altitude);
-    emit filenameChanged(filename);
-
-    QQuickPaintedItem * _parent = qobject_cast<QQuickPaintedItem *>(parent());
-    if (_parent)
-    {
-        std::cerr << "updating parent" << std::endl;
-        _parent->update();
-    }
+    emit finished(data);
 }

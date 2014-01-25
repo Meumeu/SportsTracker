@@ -8,6 +8,7 @@ Column {
     property double distance;
     property double duration;
     property var date;
+    property var sport;
 
     Label {
         text: Qt.formatDateTime(date)
@@ -16,7 +17,7 @@ Column {
     Row {
         Image {
             id: img
-            source: "image://theme/icon-camera-sports"
+            source: Qt.resolvedUrl("../../images/" + sport + ".png")
             height: column1.height
             width: height + Theme.paddingLarge
             fillMode: Image.PreserveAspectFit
@@ -37,7 +38,7 @@ Column {
         Column {
             width: (contentItem.width - img.width)/3
             Label {
-                text: qsTr("Time")
+                text: qsTr("Duration")
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.secondaryColor
             }

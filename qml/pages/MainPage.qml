@@ -136,6 +136,7 @@ Page {
                 distance: model.distance
                 duration: model.duration
                 date: model.date
+                sport: model.sport
             }
         }
 

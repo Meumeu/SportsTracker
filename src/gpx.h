@@ -15,7 +15,7 @@ public:
     typedef std::vector<TrackSegment> Track;
 
 private:
-    std::vector<TrackSegment> _track;
+    Track _track;
 
     double _distance;
     QDateTime _start_date;

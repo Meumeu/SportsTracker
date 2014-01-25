@@ -10,11 +10,11 @@ public:
     explicit WorkoutSummary(QString filename);
     WorkoutSummary();
 
-    QString filename() const;
-    QString sport() const;
-    QDateTime date() const;
-    double distance() const;
-    double duration() const;
+    QString filename() const { return _filename; }
+    QString sport() const { return _sport; }
+    QDateTime date() const { return _date; }
+    double distance() const { return _distance; }
+    double duration() const { return _duration; }
 
     void setSport(const QString&);
     void setDate(QDateTime);

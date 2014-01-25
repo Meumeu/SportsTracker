@@ -1,3 +1,5 @@
 /harbour-sportstracker.pro.user
 /harbour-sportstracker.pro.user.*
 /*.log
+*~
+*.swp

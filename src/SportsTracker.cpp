@@ -33,6 +33,10 @@
 #endif
 
 #include <sailfishapp.h>
+#include <QTranslator>
+#include <QGuiApplication>
+#include <qqml.h>
+
 #include "workout.h"
 #include "workoutsummarylist.h"
 #include "workoutdetails.h"
@@ -57,6 +61,7 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType<WorkoutSummaryList>("harbour.sportstracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList::provider);
     qRegisterMetaType<QGeoPositionInfo>("QGeoPositionInfo");
     qRegisterMetaType<WorkoutSummary>("WorkoutSummary");
+    qRegisterMetaType<WorkoutDetails::Data>("WorkoutDetails::Data");
 
     QGuiApplication * app =  SailfishApp::application(argc, argv);
     QString locale = QLocale::system().name();

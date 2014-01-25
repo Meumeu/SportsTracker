@@ -44,7 +44,7 @@ HEADERS += \
     src/qmlplotdata.h \
     src/workoutdetails.h
 
-QT += positioning location sql
+QT += positioning location
 
 TRANSLATIONS = \
     translations/en.qm \
@@ -53,6 +53,17 @@ TRANSLATIONS = \
 translation.files = TRANSLATIONS
 translation.path = /usr/share/${TARGET}
 INSTALLS += translation
+
+INSTALLS += images
+images.files = images/Running.png \
+    images/Cycling.png \
+    images/Skiing.png
+images.path = /usr/share/$${TARGET}/images
+
+OTHER_FILES += images/Running.png \
+    images/Cycling.png \
+    images/Skiing.png
+
 
 lupdate_only{
 SOURCES = \

@@ -10,62 +10,88 @@ Page {
     SilicaFlickable {
         anchors.fill: parent
 
+        BusyIndicator {
+            anchors.centerIn: parent
+            running: details.loading
+            size: BusyIndicatorSize.Large
+            visible: details.loading
+        }
+
         Column {
+            visible: !details.loading
             anchors.fill: parent
+            anchors.leftMargin: Theme.paddingLarge
+            anchors.rightMargin: Theme.paddingLarge
+            spacing: Theme.paddingMedium
 
             PageHeader {
                 title: qsTr("Workout details")
             }
 
-            Plot {
+            Row {
                 width: parent.width
-                height: width
+                Label {
+                    text: qsTr(details.sport)
+                    width: parent.width - labelDate.width
+                }
+                Label {
+                    id: labelDate
+                    text: Qt.formatDateTime(details.date)
+                }
+            }
+
+            Plot {
+                id: toto
+                width: parent.width
+                height: width * 0.75
+
                 WorkoutDetails {
+                    id: details
                     filename: page.filename
                 }
             }
 
-            /*Row {
+            Component.onCompleted: {
+                details.altitude.colour = "blue"; //Theme.primaryColor
+                details.speed.colour = "green"; //Theme.secondaryColor
+            }
+
+            Grid {
+                columns: 2
+                spacing: Theme.paddingMedium
+
                 Label {
-                    text: "00/00/0000 00:00"
+                    text: qsTr("Distance")
                 }
 
                 Label {
-                    text: "foobar"
+                    text: Util.distanceToString(details.distance)
+                }
+
+                Label {
+                    text: qsTr("Duration")
+                }
+
+                Label {
+                    text: Util.timeToString(details.duration)
+                }
+
+                Label {
+                    text: qsTr("Average speed")
+                }
+
+                Label {
+                    text: Util.speedToString(details.distance / details.duration)
+                }
+
+                Label {
+                    text: qsTr("Maximum speed")
+                }
+
+                Label {
+                    text: Util.speedToString(details.maxSpeed)
                 }
             }
-
-            Label {
-                text: qsTr("Duration")
-            }
-
-            Label {
-                text: "00:00:00"
-            }
-
-            Label {
-                text: qsTr("Distance")
-            }
-
-            Label {
-                text: "0 km"
-            }
-
-            Label {
-                text: qsTr("Average speed")
-            }
-
-            Label {
-                text: "0 km/h"
-            }
-
-            Label {
-                text: qsTr("Maximum speed")
-            }
-
-            Label {
-                text: "0 km/h"
-            }*/
         }
     }
 }

@@ -9,11 +9,6 @@
 #include <iostream>
 #include <stdexcept>
 
-QString WorkoutSummary::sport() const
-{
-    return _sport;
-}
-
 void WorkoutSummary::setSport(const QString & sport)
 {
     _sport = sport;
@@ -32,26 +27,6 @@ void WorkoutSummary::setDistance(double distance)
 void WorkoutSummary::setDuration(double time)
 {
     _duration = time;
-}
-
-QDateTime WorkoutSummary::date() const
-{
-    return _date;
-}
-
-double WorkoutSummary::distance() const
-{
-    return _distance;
-}
-
-double WorkoutSummary::duration() const
-{
-    return _duration;
-}
-
-QString WorkoutSummary::filename() const
-{
-    return _filename;
 }
 
 WorkoutSummary::WorkoutSummary(QString filename) :
