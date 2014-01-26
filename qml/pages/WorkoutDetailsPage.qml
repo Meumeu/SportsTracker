@@ -7,8 +7,26 @@ Page {
     id: page
     property var filename;
 
+    backNavigation: !toto.gesturing
+    forwardNavigation: !toto.gesturing
+
+    ListModel {
+        id: sportsList
+        ListElement {
+            name: QT_TR_NOOP("Running")
+        }
+        ListElement {
+            name: QT_TR_NOOP("Cycling")
+        }
+        ListElement {
+            name: QT_TR_NOOP("Skiing")
+        }
+    }
+
     SilicaFlickable {
         anchors.fill: parent
+        interactive: false
+        id: flickable
 
         BusyIndicator {
             anchors.centerIn: parent
@@ -20,8 +38,6 @@ Page {
         Column {
             visible: !details.loading
             anchors.fill: parent
-            anchors.leftMargin: Theme.paddingLarge
-            anchors.rightMargin: Theme.paddingLarge
             spacing: Theme.paddingMedium
 
             PageHeader {
@@ -30,6 +46,11 @@ Page {
 
             Row {
                 width: parent.width
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
+                anchors.left: parent.left
+                anchors.right: parent.right
+
                 Label {
                     text: qsTr(details.sport)
                     width: parent.width - labelDate.width
@@ -43,13 +64,38 @@ Page {
             Plot {
                 id: toto
                 width: parent.width
-                height: width * 0.75
+                height: width * 0.75 + Theme.paddingLarge
+                paddingBottom: Theme.paddingLarge
+                paddingTop: Theme.paddingMedium
+                paddingLeft: Theme.paddingLarge*1.5
+                paddingRight: Theme.paddingLarge*2.5
+                font.pixelSize: Theme.fontSizeExtraSmall
+
+                tickLength: Theme.paddingSmall
 
                 WorkoutDetails {
                     id: details
                     filename: page.filename
                 }
+
+
+                /*PinchArea {
+                    anchors.fill: parent
+                    onPinchStarted: {
+                        console.log("pinchStarted, ", pinch.scale, ", ", pinch.center)
+                        pinch.accepted = true
+                        page.backNavigation = false
+                    }
+                    onPinchUpdated: {
+                        console.log("pinchUpdated, ", pinch.scale, ", ", pinch.center)
+                    }
+                    onPinchFinished: {
+                        console.log("pinchFinished, ", pinch.scale, ", ", pinch.center)
+                        page.backNavigation = true
+                    }
+                }*/
             }
+
 
             Component.onCompleted: {
                 details.altitude.colour = "blue"; //Theme.primaryColor
@@ -59,6 +105,10 @@ Page {
             Grid {
                 columns: 2
                 spacing: Theme.paddingMedium
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Theme.paddingLarge
+                anchors.rightMargin: Theme.paddingLarge
 
                 Label {
                     text: qsTr("Distance")
@@ -81,7 +131,7 @@ Page {
                 }
 
                 Label {
-                    text: Util.speedToString(details.distance / details.duration)
+                    text: details.duration > 0 ? Util.speedToString(details.distance / details.duration) : qsTr("N/A")
                 }
 
                 Label {

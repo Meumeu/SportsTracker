@@ -9,8 +9,12 @@
 
 WorkoutDetails::WorkoutDetails(QObject *parent) :
     QObject(parent),
+    _speed(new QmlPlotData(this)),
+    _altitude(new QmlPlotData(this)),
     _loading(true)
 {
+    _speed->setAxisId(QmlPlotData::Left);
+    _altitude->setAxisId(QmlPlotData::Right);
 }
 
 void WorkoutDetails::setFilename(QString filename)
@@ -27,21 +31,15 @@ void WorkoutDetails::setFilename(QString filename)
 
 void WorkoutDetails::setData(Data data)
 {
-    delete _data.altitude;
-    delete _data.speed;
+    _data = std::move(data);
 
-    _data = data;
-
-    _data.altitude->setParent(this);
-    _data.altitude->setAxisId(QmlPlotData::Right);
-
-    _data.speed->setParent(this);
-    _data.speed->setAxisId(QmlPlotData::Left);
+    _altitude->setData(std::move(_data.altitude));
+    _speed->setData(std::move(_data.speed));
 
     _loading = false;
 
-    emit speedChanged(data.speed);
-    emit altitudeChanged(data.altitude);
+    emit speedChanged(_speed);
+    emit altitudeChanged(_altitude);
     emit sportChanged(data.sport);
     emit durationChanged(data.duration);
     emit distanceChanged(data.distance);
@@ -52,17 +50,12 @@ void WorkoutDetails::setData(Data data)
 
 WorkoutDetailsLoader::WorkoutDetailsLoader(QString filename) : _filename(filename)
 {
-    data.altitude = new QmlPlotData;
-    data.speed = new QmlPlotData;
 }
 
 void WorkoutDetailsLoader::run()
 {
     gpx file;
     file.load(_filename);
-
-    std::vector<QVector2D> speed_data;
-    std::vector<QVector2D> altitude_data;
 
     const gpx::Track& track = file.track();
 
@@ -83,21 +76,18 @@ void WorkoutDetailsLoader::run()
 
             if (j.hasAttribute(QGeoPositionInfo::GroundSpeed))
             {
-                speed_data.emplace_back(t, j.attribute(QGeoPositionInfo::GroundSpeed));
+                data.speed.emplace_back(t, j.attribute(QGeoPositionInfo::GroundSpeed) * 3.6);
                 data.maxSpeed = std::max<float>(data.maxSpeed, j.attribute(QGeoPositionInfo::GroundSpeed));
             }
 
             if (j.coordinate().type() == QGeoCoordinate::Coordinate3D)
             {
-                altitude_data.emplace_back(t, j.coordinate().altitude());
+                data.altitude.emplace_back(t, j.coordinate().altitude());
             }
         }
 
         data.duration += t0.msecsTo(i.back().timestamp()) / 1000;
     }
-
-    data.altitude->setData(std::move(altitude_data));
-    data.speed->setData(std::move(speed_data));
 
     data.date = file.startDate();
     data.distance = file.distance();

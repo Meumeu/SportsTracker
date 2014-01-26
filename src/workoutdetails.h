@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QRunnable>
+#include <QVector2D>
 #include "gpx.h"
 
 class QmlPlotData;
@@ -23,8 +24,8 @@ class WorkoutDetails : public QObject
 public:
     struct Data
     {
-        QmlPlotData * speed;
-        QmlPlotData * altitude;
+        std::vector<QVector2D> speed;
+        std::vector<QVector2D> altitude;
         QString sport;
         QDateTime date;
         double duration;
@@ -34,6 +35,8 @@ public:
 private:
 
     QString _filename;
+    QmlPlotData * _speed;
+    QmlPlotData * _altitude;
     Data _data;
     bool _loading;
 
@@ -45,8 +48,8 @@ public:
     void setFilename(QString filename);
 
     const QString& filename() const { return _filename; }
-    QmlPlotData * speed() { return _data.speed; }
-    QmlPlotData * altitude() { return _data.altitude; }
+    QmlPlotData * speed() { return _speed; }
+    QmlPlotData * altitude() { return _altitude; }
     QString sport() const { return _data.sport; }
     QDateTime date() const { return _data.date; }
     double duration() const { return _data.duration; }

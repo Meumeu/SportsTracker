@@ -138,27 +138,47 @@
 <context>
     <name>WorkoutDetailsPage</name>
     <message>
-        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="28"/>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="13"/>
+        <source>Running</source>
+        <translation type="unfinished">Course à pied</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="16"/>
+        <source>Cycling</source>
+        <translation type="unfinished">Vélo</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="19"/>
+        <source>Skiing</source>
+        <translation type="unfinished">Ski</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="41"/>
         <source>Workout details</source>
         <translation>Détails</translation>
     </message>
     <message>
-        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="64"/>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="77"/>
         <source>Distance</source>
         <translation>Distance</translation>
     </message>
     <message>
-        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="72"/>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="85"/>
         <source>Duration</source>
         <translation>Durée</translation>
     </message>
     <message>
-        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="80"/>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="93"/>
         <source>Average speed</source>
         <translation>Vitesse moyenne</translation>
     </message>
     <message>
-        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="88"/>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="97"/>
+        <source>N/A</source>
+        <translation type="unfinished">N/D</translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/WorkoutDetailsPage.qml" line="101"/>
         <source>Maximum speed</source>
         <translation>Vitesse maximum</translation>
     </message>

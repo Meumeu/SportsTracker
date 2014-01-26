@@ -65,6 +65,7 @@ desktop-file-install --delete-original       \
 
 %files
 %defattr(-,root,root,-)
+/usr/share/harbour-sportstracker/images
 /usr/share/icons/hicolor/86x86/apps
 /usr/share/applications
 /usr/share/harbour-sportstracker
