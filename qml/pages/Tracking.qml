@@ -172,6 +172,7 @@ Page {
     onStopWorkout: {
         workout.status = Workout.Stopped;
         workout.save();
+        sportsCombo.currentIndex = 1
         if (page.status === PageStatus.Active)
         {
             pageStack.navigateBack();
