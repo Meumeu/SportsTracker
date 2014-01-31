@@ -1,6 +1,5 @@
 #include "workout.h"
 #include <iostream>
-#include <assert.h>
 #include <QStringList>
 #include <QGeoPositionInfoSource>
 
@@ -67,7 +66,7 @@ void Workout::addPoint(const QGeoPositionInfo& position)
 
 void Workout::timerShot()
 {
-    assert(_status == Tracking);
+    if (_status != Tracking) return;
 
     QDateTime cur_date = QDateTime::currentDateTimeUtc();
     _duration += _pause_date.msecsTo(cur_date);

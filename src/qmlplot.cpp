@@ -407,7 +407,7 @@ void QmlPlot::paint(QPainter * painter)
         }
     }
 
-    painter->setClipRect(_paddingLeft, 0, w, h);
+    painter->setClipRect(_paddingLeft, _paddingTop, w, h);
     for(const QmlPlotData * i: findChildren<QmlPlotData *>())
     {
         painter->setPen(i->colour());

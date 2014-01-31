@@ -8,7 +8,6 @@ Page {
     property var filename;
 
     backNavigation: !toto.gesturing
-    forwardNavigation: !toto.gesturing
 
     ListModel {
         id: sportsList
@@ -77,25 +76,7 @@ Page {
                     id: details
                     filename: page.filename
                 }
-
-
-                /*PinchArea {
-                    anchors.fill: parent
-                    onPinchStarted: {
-                        console.log("pinchStarted, ", pinch.scale, ", ", pinch.center)
-                        pinch.accepted = true
-                        page.backNavigation = false
-                    }
-                    onPinchUpdated: {
-                        console.log("pinchUpdated, ", pinch.scale, ", ", pinch.center)
-                    }
-                    onPinchFinished: {
-                        console.log("pinchFinished, ", pinch.scale, ", ", pinch.center)
-                        page.backNavigation = true
-                    }
-                }*/
             }
-
 
             Component.onCompleted: {
                 details.altitude.colour = "blue"; //Theme.primaryColor
