@@ -11,15 +11,19 @@ Page {
     property CoverPage cover;
     property bool toBeReset: false;
 
+    property MapPolyline track;
+
     signal stopWorkout;
     signal startWorkout;
+    signal positionUpdate;
 
     Component.onCompleted: {
-        if (cover)
-        {
-            cover.stopWorkout.connect(stopWorkout);
-            cover.startWorkout.connect(startWorkout);
-        }
+        cover.stopWorkout.connect(stopWorkout);
+        cover.startWorkout.connect(startWorkout);
+
+        workout.lastPositionChanged.connect(positionUpdate);
+
+        map.zoomLevel = 14;
     }
 
     ListModel {
@@ -69,14 +73,20 @@ Page {
 
 
         Map {
+            id: map
+            plugin : Plugin {
+                id: plugin
+                allowExperimental: true
+                preferred: ["osm"]
+                required.mapping: Plugin.AnyMappingFeatures
+                required.geocoding: Plugin.AnyGeocodingFeatures
+            }
 
-            /* preferred: ["osm"]
-            required.mapping: Plugin.AnyMappingFeatures
-            required.geocoding: Plugin.AnyGeocodingFeatures */
+            gesture.enabled: false
+
             x: Theme.paddingLarge
             width: parent.width - 2 * x
             height: width * 0.75
-
         }
 
         Row {
@@ -172,7 +182,7 @@ Page {
     onStopWorkout: {
         workout.status = Workout.Stopped;
         workout.save();
-        sportsCombo.currentIndex = 1
+        sportsCombo.currentIndex = 0
         if (page.status === PageStatus.Active)
         {
             pageStack.navigateBack();
@@ -182,12 +192,29 @@ Page {
         {
             workout.reset();
         }
+
+        map.removeMapItem(track);
+        track.destroy();
     }
 
     onStartWorkout: {
         workout.reset();
         workout.sport = sportsList.get(sportsCombo.currentIndex).name
         workout.status = Workout.Tracking;
+
+        track = Qt.createQmlObject('import QtLocation 5.0; MapPolyline { }', map);
+        track.line.color = "red";
+        track.line.width = 3;
+        track.antialiasing = true;
+        map.addMapItem(track);
+    }
+
+    onPositionUpdate: {
+        if (workout.status == Workout.Tracking)
+        {
+            track.addCoordinate(workout.lastPosition);
+        }
+        map.center = workout.lastPosition;
     }
 
     Timer {

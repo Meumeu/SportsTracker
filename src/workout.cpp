@@ -1,5 +1,5 @@
 #include "workout.h"
-#include <iostream>
+#include "logfilepositionsource.h"
 #include <QStringList>
 #include <QGeoPositionInfoSource>
 
@@ -12,6 +12,12 @@ Workout::Workout(QObject *parent) :
     _timer(new QTimer(this)),
     position_source(QGeoPositionInfoSource::createDefaultSource(this))
 {
+    if (!position_source)
+    {
+        position_source = new LogFilePositionSource(this);
+        position_source->setUpdateInterval(100);
+    }
+
     if (position_source)
     {
         connect(position_source, &QGeoPositionInfoSource::positionUpdated, this, &Workout::addPoint);
@@ -42,13 +48,24 @@ void Workout::addPoint(const QGeoPositionInfo& position)
 {
     if (position.isValid())
     {
+        _speed = nan("");
+        if (_lastPosition.isValid() && _lastPosition.timestamp().msecsTo(position.timestamp()) < 5000)
+        {
+            double dx = gpx::distance(_lastPosition.coordinate(), position.coordinate());
+            double dt = _lastPosition.timestamp().msecsTo(position.timestamp()) * 0.001;
+            _speed = dx / dt;
+            emit speedChanged(_speed);
+        }
+
         if (_status == Tracking)
         {
             track.addPoint(position);
 
             emit distanceChanged(track.distance());
 
-            if (position.hasAttribute(QGeoPositionInfo::GroundSpeed))
+
+
+            /*if (position.hasAttribute(QGeoPositionInfo::GroundSpeed))
             {
                 _speed = position.attribute(QGeoPositionInfo::GroundSpeed);
             }
@@ -56,11 +73,11 @@ void Workout::addPoint(const QGeoPositionInfo& position)
             {
                 // TODO
             }
-            emit speedChanged(_speed);
+            emit speedChanged(_speed);*/
         }
 
-        _lastPosition = position.coordinate().toString();
-        emit lastPositionChanged(_lastPosition);
+        _lastPosition = position;
+        emit lastPositionChanged(_lastPosition.coordinate());
     }
 }
 
@@ -127,7 +144,6 @@ void Workout::setSport(const QString &sport)
     {
         _sport = sport;
         emit sportChanged(sport);
-        std::cerr << "sport changed to "<< sport.toStdString() << std::endl;
     }
 }
 
@@ -144,39 +160,4 @@ void Workout::save()
         track.setDuration(_duration * 0.001);
         emit saved(track.save());
     }
-}
-
-const QString& Workout::lastPosition() const
-{
-    return _lastPosition;
-}
-
-double Workout::distance() const
-{
-    return track.distance();
-}
-
-double Workout::speed() const
-{
-    return _speed;
-}
-
-double Workout::avgSpeed() const
-{
-    return _avgSpeed;
-}
-
-Workout::Status Workout::status() const
-{
-    return _status;
-}
-
-double Workout::duration() const
-{
-    return _duration * 0.001;
-}
-
-const QString& Workout::sport() const
-{
-    return _sport;
 }

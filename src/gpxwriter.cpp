@@ -56,7 +56,6 @@ QString gpx::save()
 
     QSaveFile file(path + QDir::separator() + filename);
 
-    std::cerr << "Saving to " << file.fileName().toStdString() << std::endl;
     file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     QXmlStreamWriter doc(&file);
     doc.setAutoFormatting(true);

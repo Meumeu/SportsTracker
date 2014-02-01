@@ -59,17 +59,24 @@ int main(int argc, char *argv[])
     qmlRegisterType<QmlPlot>("harbour.sportstracker", 1, 0, "Plot");
     qmlRegisterType<WorkoutDetails>("harbour.sportstracker", 1, 0, "WorkoutDetails");
     qmlRegisterSingletonType<WorkoutSummaryList>("harbour.sportstracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList::provider);
+
+    qRegisterMetaType<QGeoCoordinate>("QGeoCoordinate");
     qRegisterMetaType<QGeoPositionInfo>("QGeoPositionInfo");
     qRegisterMetaType<WorkoutSummary>("WorkoutSummary");
     qRegisterMetaType<WorkoutDetails::Data>("WorkoutDetails::Data");
 
+
+
     QGuiApplication * app =  SailfishApp::application(argc, argv);
+
+    app->setOrganizationName("org.meumeu");
+    app->setApplicationName("harbour-sportstracker");
+
     QString locale = QLocale::system().name();
-
     QTranslator translator;
-
     translator.load(locale, SailfishApp::pathTo(QString("translations")).toLocalFile());
     app->installTranslator(&translator);
+
 
     return SailfishApp::main(argc, argv);
 

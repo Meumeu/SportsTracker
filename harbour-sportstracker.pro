@@ -19,7 +19,8 @@ SOURCES += src/SportsTracker.cpp \
     src/gpxwriter.cpp \
     src/qmlplot.cpp \
     src/qmlplotdata.cpp \
-    src/workoutdetails.cpp
+    src/workoutdetails.cpp \
+    src/logfilepositionsource.cpp
 
 OTHER_FILES += qml/harbour-sportstracker.qml \
     qml/cover/CoverPage.qml \
@@ -42,7 +43,8 @@ HEADERS += \
     src/workoutsummarylist.h \
     src/qmlplot.h \
     src/qmlplotdata.h \
-    src/workoutdetails.h
+    src/workoutdetails.h \
+    src/logfilepositionsource.h
 
 QT += positioning location
 
