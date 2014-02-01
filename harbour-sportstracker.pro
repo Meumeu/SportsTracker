@@ -20,7 +20,8 @@ SOURCES += src/SportsTracker.cpp \
     src/qmlplot.cpp \
     src/qmlplotdata.cpp \
     src/workoutdetails.cpp \
-    src/logfilepositionsource.cpp
+    src/logfilepositionsource.cpp \
+    src/qmlplotdatasource.cpp
 
 OTHER_FILES += qml/harbour-sportstracker.qml \
     qml/cover/CoverPage.qml \
@@ -34,7 +35,10 @@ OTHER_FILES += qml/harbour-sportstracker.qml \
     qml/components/WorkoutSummary.qml \
     translations/en.ts \
     translations/fr.ts \
-    qml/pages/WorkoutDetailsPage.qml
+    qml/pages/WorkoutDetailsPage.qml \
+    qml/pages/WorkoutDetailsPlot.qml \
+    qml/pages/SplitViewPage.qml \
+    qml/pages/WorkoutDetailsMap.qml
 
 HEADERS += \
     src/workout.h \
@@ -44,7 +48,8 @@ HEADERS += \
     src/qmlplot.h \
     src/qmlplotdata.h \
     src/workoutdetails.h \
-    src/logfilepositionsource.h
+    src/logfilepositionsource.h \
+    src/qmlplotdatasource.h
 
 QT += positioning location
 

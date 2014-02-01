@@ -176,6 +176,12 @@ static gpx::TrackSegment parse_trkseg(QXmlStreamReader& doc)
         }
     }
 
+    for(size_t i = 1; i < trkseg.size(); ++i)
+    {
+        double dx = gpx::distance(trkseg[i-1].coordinate(), trkseg[i].coordinate());
+        double dt = trkseg[i-1].timestamp().msecsTo(trkseg[i].timestamp()) * 0.001;
+        trkseg[i].setAttribute(QGeoPositionInfo::GroundSpeed, dx / dt);
+    }
     return trkseg;
 }
 

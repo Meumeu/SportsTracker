@@ -57,7 +57,7 @@ public:
     void setSport(const QString& _sport);
 
 private:
-    void addPoint(const QGeoPositionInfo&);
+    void addPoint(QGeoPositionInfo);
     void timerShot();
     void computeAvgSpeed();
 

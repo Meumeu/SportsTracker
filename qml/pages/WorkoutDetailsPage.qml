@@ -1,13 +1,18 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import harbour.sportstracker 1.0
+import QtLocation 5.0
 import "../util.js" as Util
 
 Page {
     id: page
-    property var filename;
+    property alias filename: details.filename;
 
     backNavigation: !toto.gesturing
+
+    WorkoutDetails {
+        id: details
+    }
 
     ListModel {
         id: sportsList
@@ -63,25 +68,52 @@ Page {
             Plot {
                 id: toto
                 width: parent.width
-                height: width * 0.75 + Theme.paddingLarge
+                height: width * 0.5 + Theme.paddingLarge
                 paddingBottom: Theme.paddingLarge
                 paddingTop: Theme.paddingMedium
                 paddingLeft: Theme.paddingLarge*1.5
                 paddingRight: Theme.paddingLarge*2.5
                 font.pixelSize: Theme.fontSizeExtraSmall
-
                 tickLength: Theme.paddingSmall
+                interactive: false
 
-                WorkoutDetails {
-                    id: details
-                    filename: page.filename
+                PlotData {
+                    source: details.altitude
+                    colour: "blue"
+                    axisId:  PlotData.Right
                 }
+
+                PlotData {
+                    source: details.speed
+                    colour: "green"
+                    axisId:  PlotData.Left
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: pageStack.push(Qt.resolvedUrl("WorkoutDetailsPlot.qml"), {details: details})
+                }
+
             }
 
-            Component.onCompleted: {
-                details.altitude.colour = "blue"; //Theme.primaryColor
-                details.speed.colour = "green"; //Theme.secondaryColor
-            }
+            /*Map {
+                id: map
+                width: parent.width - 2 * Theme.paddingLarge
+                height: width * 0.5
+                x: Theme.paddingLarge
+                plugin : Plugin {
+                    id: plugin
+                    allowExperimental: true
+                    preferred: ["osm"]
+                    required.mapping: Plugin.AnyMappingFeatures
+                    required.geocoding: Plugin.AnyGeocodingFeatures
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: pageStack.push(Qt.resolvedUrl("WorkoutDetailsMap.qml"), {details: details})
+                }
+            }*/
 
             Grid {
                 columns: 2

@@ -42,6 +42,7 @@
 #include "workoutdetails.h"
 #include "qmlplot.h"
 #include "qmlplotdata.h"
+#include "qmlplotdatasource.h"
 
 int main(int argc, char *argv[])
 {
@@ -55,17 +56,16 @@ int main(int argc, char *argv[])
     // To display the view, call "show()" (will show fullscreen on device).
 
     qmlRegisterType<Workout>("harbour.sportstracker", 1, 0, "Workout");
-    qmlRegisterUncreatableType<QmlPlotData>("harbour.sportstracker", 1, 0, "PlotData", "PlotData must be created from C++ code");
-    qmlRegisterType<QmlPlot>("harbour.sportstracker", 1, 0, "Plot");
     qmlRegisterType<WorkoutDetails>("harbour.sportstracker", 1, 0, "WorkoutDetails");
+    qmlRegisterType<QmlPlot>("harbour.sportstracker", 1, 0, "Plot");
+    qmlRegisterType<QmlPlotData>("harbour.sportstracker", 1, 0, "PlotData");
+    qmlRegisterType<QmlPlotDataSource>("harbour.sportstracker", 1, 0, "PlotDataSource");
     qmlRegisterSingletonType<WorkoutSummaryList>("harbour.sportstracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList::provider);
 
     qRegisterMetaType<QGeoCoordinate>("QGeoCoordinate");
     qRegisterMetaType<QGeoPositionInfo>("QGeoPositionInfo");
     qRegisterMetaType<WorkoutSummary>("WorkoutSummary");
     qRegisterMetaType<WorkoutDetails::Data>("WorkoutDetails::Data");
-
-
 
     QGuiApplication * app =  SailfishApp::application(argc, argv);
 

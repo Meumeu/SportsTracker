@@ -2,6 +2,7 @@
 #include "gpx.h"
 #include "qmlplotdata.h"
 
+#include <iostream>
 #include <memory>
 #include <QQuickPaintedItem>
 #include <QThread>
@@ -9,12 +10,10 @@
 
 WorkoutDetails::WorkoutDetails(QObject *parent) :
     QObject(parent),
-    _speed(new QmlPlotData(this)),
-    _altitude(new QmlPlotData(this)),
+    _speed(new QmlPlotDataSource(this)),
+    _altitude(new QmlPlotDataSource(this)),
     _loading(true)
 {
-    _speed->setAxisId(QmlPlotData::Left);
-    _altitude->setAxisId(QmlPlotData::Right);
 }
 
 void WorkoutDetails::setFilename(QString filename)
@@ -84,6 +83,8 @@ void WorkoutDetailsLoader::run()
             {
                 data.altitude.emplace_back(t, j.coordinate().altitude());
             }
+
+            data.points.push_back(j);
         }
 
         data.duration += t0.msecsTo(i.back().timestamp()) / 1000;
@@ -94,4 +95,25 @@ void WorkoutDetailsLoader::run()
     data.sport = file.sport();
 
     emit finished(data);
+}
+
+void WorkoutDetails::fillPolyLine(QObject *obj) const
+{
+    if (!obj) return;
+
+    QMetaMethod addCoord = obj->metaObject()->method(obj->metaObject()->indexOfMethod("addCoordinate(QGeoCoordinate)"));
+    if (!addCoord.isValid())
+    {
+        std::cerr << "invalid method" << std::endl;
+        return;
+    }
+
+    /*for(const QGeoPositionInfo& i: _data.points)
+    {
+        //std::cerr << "adding " << i.coordinate().toString().toStdString() << std::endl;
+        if (!addCoord.invoke(obj, Q_ARG(QGeoCoordinate, i.coordinate())))
+        {
+            std::cerr << "invalid invoke" << std::endl;
+        }
+    }*/
 }

@@ -39,7 +39,8 @@ QmlPlot::QmlPlot(QQuickItem * parent) :
     _yPen(Qt::gray),
     _tickLength(0),
     _textColour(Qt::white),
-    _gesturing(false)
+    _gesturing(false),
+    _interactive(true)
 {
 }
 
@@ -232,6 +233,15 @@ void QmlPlot::setGesturing(bool gesturing)
     }
 }
 
+void QmlPlot::setInteractive(bool interactive)
+{
+    if (interactive != _interactive)
+    {
+        _interactive = interactive;
+        emit interactiveChanged(_interactive);
+    }
+}
+
 static QString time_to_string(float t, float tick)
 {
     int h = t / 3600;
@@ -282,10 +292,16 @@ static void compute_gesture(float pos, float newpos, float posmin, float posmax,
 
 void QmlPlot::touchEvent(QTouchEvent *event)
 {
+    if (!_interactive) return;
+
     QVector<int> ids;
     switch(event->type())
     {
     case QEvent::TouchBegin:
+        _maybeClick = (event->touchPoints().size() == 1);
+        if (_maybeClick)
+            _firstPoint = event->touchPoints().front();
+
         for(QTouchEvent::TouchPoint i: event->touchPoints())
         {
             ids.push_back(i.id());
@@ -297,6 +313,9 @@ void QmlPlot::touchEvent(QTouchEvent *event)
         break;
 
     case QEvent::TouchUpdate:
+        _maybeClick = _maybeClick && (event->touchPoints().size() == 1);
+        _maybeClick = _maybeClick && (event->touchPoints().front().state() & Qt::TouchPointStationary);
+
         if (event->touchPoints().count() == 1)
         {
             QPointF pt1 = event->touchPoints()[0].pos();
@@ -337,7 +356,13 @@ void QmlPlot::touchEvent(QTouchEvent *event)
         break;
 
     case QEvent::TouchCancel:
+        setGesturing(false);
+        break;
+
     case QEvent::TouchEnd:
+        if (_maybeClick)
+            emit clicked();
+
         setGesturing(false);
         break;
 

@@ -30,6 +30,7 @@ class QmlPlot : public QQuickPaintedItem
     Q_PROPERTY(QFont font READ font WRITE setFont NOTIFY fontChanged)
     Q_PROPERTY(QColor textColour READ textColour WRITE setTextColour NOTIFY textColourChanged)
     Q_PROPERTY(bool gesturing READ gesturing NOTIFY gesturingChanged)
+    Q_PROPERTY(bool interactive READ interactive WRITE setInteractive NOTIFY interactiveChanged)
 
     int _paddingLeft, _paddingRight, _paddingTop, _paddingBottom;
     float _xmin, _xmax, _xtick;
@@ -41,11 +42,15 @@ class QmlPlot : public QQuickPaintedItem
     QFont _font;
     QColor _textColour;
     bool _gesturing;
+    bool _interactive;
 
     int _width, _height;
     float _dataxmin, _dataxmax;
     float _datay1min, _datay1max;
     float _datay2min, _datay2max;
+
+    bool _maybeClick;
+    QTouchEvent::TouchPoint _firstPoint;
 
     void resetTick();
 public:
@@ -73,6 +78,7 @@ public:
     QFont font() const { return _font; }
     QColor textColour() const { return _textColour; }
     bool gesturing() const { return _gesturing; }
+    bool interactive() const { return _interactive; }
 
     void setPaddingLeft(int paddingLeft);
     void setPaddingRight(int paddingRight);
@@ -90,6 +96,7 @@ public:
     void setTickLength(int tickLength);
     void setFont(QFont font);
     void setTextColour(QColor textColour);
+    void setInteractive(bool interactive);
 
     Q_INVOKABLE void resetAxes();
 
@@ -120,6 +127,8 @@ signals:
     void fontChanged(QFont font);
     void textColourChanged(QColor textColour);
     void gesturingChanged(bool gesturing);
+    void interactiveChanged(bool interactive);
+    void clicked();
 
 public slots:
 

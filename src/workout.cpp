@@ -44,7 +44,7 @@ void Workout::reset()
     emit durationChanged(0);
 }
 
-void Workout::addPoint(const QGeoPositionInfo& position)
+void Workout::addPoint(QGeoPositionInfo position)
 {
     if (position.isValid())
     {
@@ -55,6 +55,8 @@ void Workout::addPoint(const QGeoPositionInfo& position)
             double dt = _lastPosition.timestamp().msecsTo(position.timestamp()) * 0.001;
             _speed = dx / dt;
             emit speedChanged(_speed);
+
+            position.setAttribute(QGeoPositionInfo::GroundSpeed, _speed);
         }
 
         if (_status == Tracking)
@@ -62,18 +64,6 @@ void Workout::addPoint(const QGeoPositionInfo& position)
             track.addPoint(position);
 
             emit distanceChanged(track.distance());
-
-
-
-            /*if (position.hasAttribute(QGeoPositionInfo::GroundSpeed))
-            {
-                _speed = position.attribute(QGeoPositionInfo::GroundSpeed);
-            }
-            else
-            {
-                // TODO
-            }
-            emit speedChanged(_speed);*/
         }
 
         _lastPosition = position;

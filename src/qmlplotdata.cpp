@@ -1,6 +1,8 @@
 #include "qmlplotdata.h"
 #include "qmlplot.h"
 
+std::vector<QVector2D> QmlPlotData::_empty_data;
+
 QmlPlotData::QmlPlotData(QObject *parent) :
     QObject(parent),
     _colour(Qt::black)
@@ -49,17 +51,38 @@ void QmlPlotData::setAxisId(AxisId axisId)
     resetPlotAxes();
 }
 
-void QmlPlotData::setData(const std::vector<QVector2D>& data)
+void QmlPlotData::setSource(QmlPlotDataSource * source)
 {
-    _data = data;
-    emit dataChanged(_data);
+    if (source != _source)
+    {
+        if (_source)
+        {
+            disconnect(_source, &QmlPlotDataSource::dataChanged, this, &QmlPlotData::sourceDataChanged);
+            disconnect(_source, &QmlPlotDataSource::destroyed, this, &QmlPlotData::sourceDestroyed);
+        }
+
+        if (source)
+        {
+            connect(source, &QmlPlotDataSource::dataChanged, this, &QmlPlotData::sourceDataChanged);
+            connect(source, &QmlPlotDataSource::destroyed, this, &QmlPlotData::sourceDestroyed);
+        }
+
+        _source = source;
+        emit sourceChanged(source);
+        emit dataChanged(data());
+
+        resetPlotAxes();
+    }
+}
+
+void QmlPlotData::sourceDataChanged(const std::vector<QVector2D> &data)
+{
+    emit dataChanged(data);
+
     resetPlotAxes();
 }
 
-void QmlPlotData::setData(std::vector<QVector2D>&& data)
+void QmlPlotData::sourceDestroyed()
 {
-    _data = std::move(data);
-    emit dataChanged(_data);
-    resetPlotAxes();
+    setSource(nullptr);
 }
-

@@ -4,16 +4,17 @@
 #include <QObject>
 #include <QRunnable>
 #include <QVector2D>
+#include <QVariantList>
 #include "gpx.h"
 
-class QmlPlotData;
+class QmlPlotDataSource;
 
 class WorkoutDetails : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString filename READ filename WRITE setFilename)
-    Q_PROPERTY(QmlPlotData * speed READ speed NOTIFY speedChanged)
-    Q_PROPERTY(QmlPlotData * altitude READ altitude NOTIFY altitudeChanged)
+    Q_PROPERTY(QmlPlotDataSource * speed READ speed NOTIFY speedChanged)
+    Q_PROPERTY(QmlPlotDataSource * altitude READ altitude NOTIFY altitudeChanged)
     Q_PROPERTY(QString sport READ sport NOTIFY sportChanged)
     Q_PROPERTY(QDateTime date READ date NOTIFY dateChanged)
     Q_PROPERTY(double duration READ duration NOTIFY durationChanged)
@@ -31,12 +32,13 @@ public:
         double duration;
         double distance;
         double maxSpeed;
+        std::vector<QGeoPositionInfo> points;
     };
 private:
 
     QString _filename;
-    QmlPlotData * _speed;
-    QmlPlotData * _altitude;
+    QmlPlotDataSource * _speed;
+    QmlPlotDataSource * _altitude;
     Data _data;
     bool _loading;
 
@@ -48,8 +50,8 @@ public:
     void setFilename(QString filename);
 
     const QString& filename() const { return _filename; }
-    QmlPlotData * speed() { return _speed; }
-    QmlPlotData * altitude() { return _altitude; }
+    QmlPlotDataSource * speed() { return _speed; }
+    QmlPlotDataSource * altitude() { return _altitude; }
     QString sport() const { return _data.sport; }
     QDateTime date() const { return _data.date; }
     double duration() const { return _data.duration; }
@@ -57,10 +59,12 @@ public:
     double maxSpeed() const { return _data.maxSpeed; }
     bool loading() const { return _loading; }
 
+    Q_INVOKABLE void fillPolyLine(QObject * obj) const;
+
 signals:
     void filenameChanged(QString filename);
-    void speedChanged(QmlPlotData * speed);
-    void altitudeChanged(QmlPlotData * altitude);
+    void speedChanged(QmlPlotDataSource * speed);
+    void altitudeChanged(QmlPlotDataSource * altitude);
     void sportChanged(QString sport);
     void dateChanged(QDateTime date);
     void durationChanged(double duration);

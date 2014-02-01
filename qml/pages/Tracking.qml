@@ -71,7 +71,6 @@ Page {
             title: qsTr("Workout")
         }
 
-
         Map {
             id: map
             plugin : Plugin {
