@@ -43,6 +43,7 @@
 #include "qmlplot.h"
 #include "qmlplotdata.h"
 #include "qmlplotdatasource.h"
+#include "settings.h"
 
 int main(int argc, char *argv[])
 {
@@ -61,6 +62,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<QmlPlotData>("harbour.sportstracker", 1, 0, "PlotData");
     qmlRegisterType<QmlPlotDataSource>("harbour.sportstracker", 1, 0, "PlotDataSource");
     qmlRegisterSingletonType<WorkoutSummaryList>("harbour.sportstracker", 1, 0, "WorkoutSummaryList", &WorkoutSummaryList::provider);
+    qmlRegisterSingletonType<Settings>("harbour.sportstracker", 1, 0, "Settings", &Settings::provider);
 
     qRegisterMetaType<QGeoCoordinate>("QGeoCoordinate");
     qRegisterMetaType<QGeoPositionInfo>("QGeoPositionInfo");

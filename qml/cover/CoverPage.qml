@@ -39,8 +39,18 @@ CoverBackground {
     signal stopWorkout;
     signal startWorkout;
 
+
+    Image {
+        width: parent.width * 0.9
+        x: parent.width * 0.05
+        y: parent.width * 0.1
+        height: sourceSize.height * width / sourceSize.width
+        fillMode: Image.PreserveAspectFit
+        source: Qt.resolvedUrl("../../images/cover.png")
+        opacity: 0.1
+    }
+
     CoverPlaceholder {
-        //icon.source: "image://theme/icon-camera-sports"
         Label {
             text: (workout.status == Workout.Tracking || workout.status == Workout.Paused) ?
                   "%1\n%2\n%3"

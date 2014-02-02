@@ -21,7 +21,8 @@ SOURCES += src/SportsTracker.cpp \
     src/qmlplotdata.cpp \
     src/workoutdetails.cpp \
     src/logfilepositionsource.cpp \
-    src/qmlplotdatasource.cpp
+    src/qmlplotdatasource.cpp \
+    src/settings.cpp
 
 OTHER_FILES += qml/harbour-sportstracker.qml \
     qml/cover/CoverPage.qml \
@@ -30,7 +31,6 @@ OTHER_FILES += qml/harbour-sportstracker.qml \
     harbour-sportstracker.desktop \
     qml/pages/MainPage.qml \
     qml/pages/Tracking.qml \
-    qml/pages/Settings.qml \
     qml/util.js \
     qml/components/WorkoutSummary.qml \
     translations/en.ts \
@@ -38,7 +38,8 @@ OTHER_FILES += qml/harbour-sportstracker.qml \
     qml/pages/WorkoutDetailsPage.qml \
     qml/pages/WorkoutDetailsPlot.qml \
     qml/pages/SplitViewPage.qml \
-    qml/pages/WorkoutDetailsMap.qml
+    qml/pages/WorkoutDetailsMap.qml \
+    qml/pages/SettingsPage.qml
 
 HEADERS += \
     src/workout.h \
@@ -49,7 +50,8 @@ HEADERS += \
     src/qmlplotdata.h \
     src/workoutdetails.h \
     src/logfilepositionsource.h \
-    src/qmlplotdatasource.h
+    src/qmlplotdatasource.h \
+    src/settings.h
 
 QT += positioning location
 
@@ -64,12 +66,14 @@ INSTALLS += translation
 INSTALLS += images
 images.files = images/Running.png \
     images/Cycling.png \
-    images/Skiing.png
+    images/Skiing.png \
+    images/cover.png
 images.path = /usr/share/$${TARGET}/images
 
 OTHER_FILES += images/Running.png \
     images/Cycling.png \
-    images/Skiing.png
+    images/Skiing.png \
+    images/cover.png
 
 
 lupdate_only{
