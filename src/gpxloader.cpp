@@ -8,77 +8,92 @@
 
 static void parse_metadata_extensions(gpx& ws, QXmlStreamReader& doc)
 {
-    while(!doc.atEnd())
+    while(true)
     {
-        doc.readNext();
-        if (doc.isEndElement()) break;
-        if (doc.isWhitespace()) continue;
-
-        if (doc.isStartElement() && doc.name() == "duration")
+        switch (doc.readNext())
         {
-            bool ok;
-            ws.setDuration(QLocale::c().toDouble(doc.readElementText(), &ok));
-            if (!ok)
-                doc.raiseError("Invalid duration");
-        }
-        else if (doc.isStartElement() && doc.name() == "sport")
-        {
-            ws.setSport(doc.readElementText());
-        }
-        else if (doc.isStartElement())
-        {
-            doc.skipCurrentElement();
+        case QXmlStreamReader::EndElement:
+        case QXmlStreamReader::EndDocument:
+            return;
+        case QXmlStreamReader::StartElement:
+            if (doc.name() == QStringLiteral("duration"))
+            {
+                bool ok;
+                ws.setDuration(QLocale::c().toDouble(doc.readElementText(), &ok));
+                if (!ok)
+                    doc.raiseError("Invalid duration");
+            }
+            else if (doc.name() == QStringLiteral("sport"))
+            {
+                ws.setSport(doc.readElementText());
+            }
+            else
+            {
+                doc.skipCurrentElement();
+            }
+        default:
+            break;
         }
     }
 }
 
 static void parse_metadata(gpx& ws, QXmlStreamReader& doc)
 {
-    while(!doc.atEnd())
+    while(true)
     {
-        doc.readNext();
-        if (doc.isEndElement()) break;
-        if (doc.isWhitespace()) continue;
-
-        if (doc.isStartElement() && doc.name() == "time")
+        switch (doc.readNext())
         {
-            QDateTime t = QDateTime::fromString(doc.readElementText(), Qt::ISODate);
-            if (t.isValid())
-                ws.setStartDate(t);
+        case QXmlStreamReader::EndElement:
+        case QXmlStreamReader::EndDocument:
+            return;
+        case QXmlStreamReader::StartElement:
+            if (doc.name() == QStringLiteral("time"))
+            {
+                QDateTime t = QDateTime::fromString(doc.readElementText(), Qt::ISODate);
+                if (t.isValid())
+                    ws.setStartDate(t);
+                else
+                    doc.raiseError("Invalid start date");
+            }
+            else if (doc.name() == QStringLiteral("extensions"))
+            {
+                parse_metadata_extensions(ws, doc);
+            }
             else
-                doc.raiseError("Invalid start date");
-        }
-        else if (doc.isStartElement() && doc.name() == "extensions")
-        {
-            parse_metadata_extensions(ws, doc);
-        }
-        else if (doc.isStartElement())
-        {
-            doc.skipCurrentElement();
+            {
+                doc.skipCurrentElement();
+            }
+        default:
+            break;
         }
     }
 }
 
 static void parse_trkpt_extensions(QXmlStreamReader& doc, QGeoPositionInfo& pt)
 {
-    while(!doc.atEnd())
+    while(true)
     {
-        doc.readNext();
-        if (doc.isEndElement()) break;
-        if (doc.isWhitespace()) continue;
-
-        if (doc.isStartElement() && doc.name() == "groundspeed" && doc.namespaceUri() == "http://sportstracker.meumeu.org/")
+        switch (doc.readNext())
         {
-            bool ok;
-            pt.setAttribute(QGeoPositionInfo::GroundSpeed, QLocale::c().toDouble(doc.readElementText(), &ok));
-            if (!ok)
+        case QXmlStreamReader::EndElement:
+        case QXmlStreamReader::EndDocument:
+            return;
+        case QXmlStreamReader::StartElement:
+            if (doc.name() == QStringLiteral("groundspeed") && doc.namespaceUri() == "http://sportstracker.meumeu.org/")
             {
-                doc.raiseError("Invalid ground speed");
+                bool ok;
+                pt.setAttribute(QGeoPositionInfo::GroundSpeed, QLocale::c().toDouble(doc.readElementText(), &ok));
+                if (!ok)
+                {
+                    doc.raiseError("Invalid ground speed");
+                }
             }
-        }
-        else if (doc.isStartElement())
-        {
-            doc.skipCurrentElement();
+            else
+            {
+                doc.skipCurrentElement();
+            }
+        default:
+            break;
         }
     }
 }
@@ -91,90 +106,104 @@ static QGeoPositionInfo parse_trkpt(QXmlStreamReader& doc)
     bool ok = false;
     const auto & attr = doc.attributes();
 
-    if (attr.hasAttribute("lat"))
-        coord.setLatitude(QLocale::c().toDouble(attr.value("lat"), &ok));
+    if (attr.hasAttribute(QStringLiteral("lat")))
+        coord.setLatitude(QLocale::c().toDouble(attr.value(QStringLiteral("lat")), &ok));
     if (!ok)
     {
         doc.raiseError("Invalid latitude");
         doc.skipCurrentElement();
     }
 
-    if (attr.hasAttribute("lon"))
-        coord.setLongitude(QLocale::c().toDouble(attr.value("lon"), &ok));
+    if (attr.hasAttribute(QStringLiteral("lon")))
+        coord.setLongitude(QLocale::c().toDouble(attr.value(QStringLiteral("lon")), &ok));
     if (!ok)
     {
         doc.raiseError("Invalid longitude");
         doc.skipCurrentElement();
     }
-
-    while(!doc.atEnd())
+    while(true)
     {
-        doc.readNext();
-        if (doc.isEndElement()) break;
-        if (doc.isWhitespace()) continue;
+        switch (doc.readNext())
+        {
+        case QXmlStreamReader::EndElement:
+        case QXmlStreamReader::EndDocument:
+            pt.setCoordinate(coord);
+            return pt;
 
-        if (doc.isStartElement() && doc.name() == "ele")
-        {
-            coord.setAltitude(QLocale::c().toDouble(doc.readElementText(), &ok));
-            if (!ok)
+        case QXmlStreamReader::StartElement:
+            if (doc.name() == QStringLiteral("ele"))
             {
-                doc.raiseError("Invalid altitude");
+                coord.setAltitude(QLocale::c().toDouble(doc.readElementText(), &ok));
+                if (!ok)
+                {
+                    doc.raiseError("Invalid altitude");
+                }
             }
-        }
-        else if (doc.isStartElement() && doc.name() == "time")
-        {
-            pt.setTimestamp(QDateTime::fromString(doc.readElementText(), Qt::ISODate));
-        }
-        else if (doc.isStartElement() && doc.name() == "hdop")
-        {
-            pt.setAttribute(QGeoPositionInfo::HorizontalAccuracy, QLocale::c().toDouble(doc.readElementText(), &ok));
-            if (!ok)
+            else if (doc.name() == QStringLiteral("time"))
             {
-                doc.raiseError("Invalid hdop");
+                pt.setTimestamp(QDateTime::fromString(doc.readElementText(), Qt::ISODate));
             }
-        }
-        else if (doc.isStartElement() && doc.name() == "vdop")
-        {
-            pt.setAttribute(QGeoPositionInfo::VerticalAccuracy, QLocale::c().toDouble(doc.readElementText(), &ok));
-            if (!ok)
+            else if (doc.name() == QStringLiteral("hdop"))
             {
-                doc.raiseError("Invalid vdop");
+                pt.setAttribute(QGeoPositionInfo::HorizontalAccuracy, QLocale::c().toDouble(doc.readElementText(), &ok));
+                if (!ok)
+                {
+                    doc.raiseError("Invalid hdop");
+                }
             }
-        }
-        else if (doc.isStartElement() && doc.name() == "extensions")
-        {
-            parse_trkpt_extensions(doc, pt);
-        }
-        else if (doc.isStartElement())
-        {
-            doc.skipCurrentElement();
+            else if (doc.name() == QStringLiteral("vdop"))
+            {
+                pt.setAttribute(QGeoPositionInfo::VerticalAccuracy, QLocale::c().toDouble(doc.readElementText(), &ok));
+                if (!ok)
+                {
+                    doc.raiseError("Invalid vdop");
+                }
+            }
+            else if (doc.name() == QStringLiteral("extensions"))
+            {
+                parse_trkpt_extensions(doc, pt);
+            }
+            else
+            {
+                doc.skipCurrentElement();
+            }
+        default:
+            break;
         }
     }
-
     pt.setCoordinate(coord);
-
     return pt;
+
+}
+
+static void parse_trkseg(QXmlStreamReader &doc, gpx::TrackSegment & trkseg)
+{
+    while(true)
+    {
+        switch (doc.readNext())
+        {
+        case QXmlStreamReader::EndElement:
+        case QXmlStreamReader::EndDocument:
+            return;
+        case QXmlStreamReader::StartElement:
+            if (doc.name() == QStringLiteral("trkpt"))
+            {
+                trkseg.push_back(parse_trkpt(doc));
+            }
+            else
+            {
+                doc.skipCurrentElement();
+            }
+        default:
+            break;
+        }
+    }
 }
 
 static gpx::TrackSegment parse_trkseg(QXmlStreamReader& doc)
 {
     gpx::TrackSegment trkseg;
-
-    while(!doc.atEnd())
-    {
-        doc.readNext();
-        if (doc.isEndElement()) break;
-        if (doc.isWhitespace()) continue;
-
-        if (doc.isStartElement() && doc.name() == "trkpt")
-        {
-            trkseg.push_back(parse_trkpt(doc));
-        }
-        else if (doc.isStartElement())
-        {
-            doc.skipCurrentElement();
-        }
-    }
+    parse_trkseg(doc, trkseg);
 
     for(size_t i = 1; i < trkseg.size(); ++i)
     {
@@ -189,19 +218,24 @@ static gpx::Track parse_trk(QXmlStreamReader& doc)
 {
     gpx::Track trk;
 
-    while(!doc.atEnd())
+    while(true)
     {
-        doc.readNext();
-        if (doc.isEndElement()) break;
-        if (doc.isWhitespace()) continue;
-
-        if (doc.isStartElement() && doc.name() == "trkseg")
+        switch (doc.readNext())
         {
-            trk.push_back(parse_trkseg(doc));
-        }
-        else if (doc.isStartElement())
-        {
-            doc.skipCurrentElement();
+        case QXmlStreamReader::EndElement:
+        case QXmlStreamReader::EndDocument:
+            return trk;
+        case QXmlStreamReader::StartElement:
+            if (doc.name() == QStringLiteral("trkseg"))
+            {
+                trk.push_back(parse_trkseg(doc));
+            }
+            else
+            {
+                doc.skipCurrentElement();
+            }
+        default:
+            break;
         }
     }
 
@@ -210,23 +244,28 @@ static gpx::Track parse_trk(QXmlStreamReader& doc)
 
 static void parse_gpx(gpx& ws, QXmlStreamReader& doc)
 {
-    while(!doc.atEnd())
+    while(true)
     {
-        doc.readNext();
-        if (doc.isEndElement()) break;
-        if (doc.isWhitespace()) continue;
-
-        if (doc.isStartElement() && doc.name() == "metadata")
+        switch (doc.readNext())
         {
-            parse_metadata(ws, doc);
-        }
-        else if (doc.isStartElement() && doc.name() == "trk")
-        {
-            ws.setTrack(parse_trk(doc));
-        }
-        else if (doc.isStartElement())
-        {
-            doc.skipCurrentElement();
+        case QXmlStreamReader::EndElement:
+        case QXmlStreamReader::EndDocument:
+            return;
+        case QXmlStreamReader::StartElement:
+            if (doc.name() == QStringLiteral("metadata"))
+            {
+                parse_metadata(ws, doc);
+            }
+            else if (doc.name() == QStringLiteral("trk"))
+            {
+                ws.setTrack(parse_trk(doc));
+            }
+            else
+            {
+                doc.skipCurrentElement();
+            }
+        default:
+            break;
         }
     }
 }
@@ -239,17 +278,20 @@ void gpx::load(const QString &filename)
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QXmlStreamReader doc(&file);
 
-    while(!doc.atEnd())
+    while(true)
     {
-        doc.readNext();
-        if (doc.isWhitespace()) continue;
-
-        if (doc.isStartDocument())
+        switch (doc.readNext())
         {
-        }
-        else if (doc.isStartElement() && doc.name() == "gpx")
-        {
-            parse_gpx(*this, doc);
+        case QXmlStreamReader::EndElement:
+        case QXmlStreamReader::EndDocument:
+            return;
+        case QXmlStreamReader::StartElement:
+            if (doc.name() == QStringLiteral("gpx"))
+            {
+                parse_gpx(*this, doc);
+            }
+        default:
+            break;
         }
     }
 
