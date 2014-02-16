@@ -51,10 +51,12 @@ QString gpx::save()
 {
     QDateTime start_date = _start_date.toUTC();
     QString filename = start_date.toString("yyyy'-'MM'-'dd'_'hh'-'mm'-'ss'.gpx'");
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-    QDir(path).mkpath(".");
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QDir::separator() + filename;
+    QString cachepath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + QDir::separator() + filename + ".bin";
+    QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation)).mkpath(".");
+    QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)).mkpath(".");
 
-    QSaveFile file(path + QDir::separator() + filename);
+    QSaveFile file(path);
 
     file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
     QXmlStreamWriter doc(&file);
@@ -91,6 +93,11 @@ QString gpx::save()
     doc.writeEndDocument();
 
     file.commit();
+
+    QSaveFile cachefile(cachepath);
+    cachefile.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    serialize(&cachefile);
+    cachefile.commit();
 
     return filename;
 }

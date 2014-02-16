@@ -107,6 +107,10 @@ void WorkoutSummaryList::remove(int index)
             QDir::separator() + _list[index].filename();
     QFile::remove(path);
 
+    path = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) +
+            QDir::separator() + _list[index].filename() + ".bin";
+    QFile::remove(path);
+
     beginRemoveRows(QModelIndex(), index, index);
     _list.erase(_list.begin() + index, _list.begin() + index + 1);
     endRemoveRows();

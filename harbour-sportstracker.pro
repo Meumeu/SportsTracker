@@ -22,7 +22,8 @@ SOURCES += src/SportsTracker.cpp \
     src/workoutdetails.cpp \
     src/logfilepositionsource.cpp \
     src/qmlplotdatasource.cpp \
-    src/settings.cpp
+    src/settings.cpp \
+    src/gpxcache.cpp
 
 OTHER_FILES += qml/harbour-sportstracker.qml \
     qml/cover/CoverPage.qml \

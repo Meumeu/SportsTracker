@@ -49,7 +49,7 @@ void gpx::setTrack(const Track& track)
     _distance = 0;
     for(const TrackSegment& i: _track)
     {
-        for(size_t j = 1; j < i.size(); ++j)
+        for(ssize_t j = 1; j < i.size(); ++j)
         {
             _distance += distance(i[j-1].coordinate(), i[j].coordinate());
         }
@@ -76,12 +76,12 @@ void gpx::addPoint(const QGeoPositionInfo &pt)
     if (!pt.timestamp().isValid()) return;
 
     if (_track.empty())
-        _track.emplace_back(TrackSegment{});
+        _track.push_back(TrackSegment{});
 
     if (!_track.back().empty())
     {
         if (_track.back().back().timestamp().msecsTo(pt.timestamp()) > 5000)
-            _track.emplace_back(TrackSegment{});
+            _track.push_back(TrackSegment{});
     }
 
     if (!_track.back().empty())

@@ -4,6 +4,7 @@
 #include <QLocale>
 #include <QDir>
 #include <QFile>
+#include <QSaveFile>
 #include <stdexcept>
 
 static void parse_metadata_extensions(gpx& ws, QXmlStreamReader& doc)
@@ -205,7 +206,7 @@ static gpx::TrackSegment parse_trkseg(QXmlStreamReader& doc)
     gpx::TrackSegment trkseg;
     parse_trkseg(doc, trkseg);
 
-    for(size_t i = 1; i < trkseg.size(); ++i)
+    for(ssize_t i = 1; i < trkseg.size(); ++i)
     {
         double dx = gpx::distance(trkseg[i-1].coordinate(), trkseg[i].coordinate());
         double dt = trkseg[i-1].timestamp().msecsTo(trkseg[i].timestamp()) * 0.001;
@@ -273,6 +274,17 @@ static void parse_gpx(gpx& ws, QXmlStreamReader& doc)
 void gpx::load(const QString &filename)
 {
     QString path = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + QDir::separator() + filename;
+    QString cachepath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + QDir::separator() + filename + ".bin";
+
+    QFileInfo cachefileinfo(cachepath);
+
+    if (cachefileinfo.exists() && cachefileinfo.lastModified() > QFileInfo(path).lastModified())
+    {
+        QFile file(cachepath);
+        file.open(QIODevice::ReadOnly);
+        if (deserialize(&file))
+            return;
+    }
 
     QFile file(path);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -284,7 +296,14 @@ void gpx::load(const QString &filename)
         {
         case QXmlStreamReader::EndElement:
         case QXmlStreamReader::EndDocument:
+        {
+            QDir(QStandardPaths::writableLocation(QStandardPaths::CacheLocation)).mkpath(".");
+            QSaveFile cachefile(cachepath);
+            cachefile.open(QIODevice::WriteOnly | QIODevice::Truncate);
+            serialize(&cachefile);
+            cachefile.commit();
             return;
+        }
         case QXmlStreamReader::StartElement:
             if (doc.name() == QStringLiteral("gpx"))
             {

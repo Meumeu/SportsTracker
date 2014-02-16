@@ -3,16 +3,17 @@
 
 #include <QDateTime>
 #include <QGeoPositionInfo>
-#include <vector>
+#include <QVector>
 
 class QXmlStreamWriter;
 class QXmlStreamReader;
+class QIODevice;
 
 class gpx
 {
 public:
-    typedef std::vector<QGeoPositionInfo> TrackSegment;
-    typedef std::vector<TrackSegment> Track;
+    typedef QVector<QGeoPositionInfo> TrackSegment;
+    typedef QVector<TrackSegment> Track;
 
 private:
     Track _track;
@@ -21,6 +22,9 @@ private:
     QDateTime _start_date;
     QString _sport;
     double _duration;
+
+    void serialize(QIODevice * file);
+    bool deserialize(QIODevice * file);
 
 public:
     gpx();
