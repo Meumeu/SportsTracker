@@ -32,7 +32,6 @@ void WorkoutSummary::setDuration(double time)
 WorkoutSummary::WorkoutSummary(QString filename) :
     _filename(filename)
 {
-    // TODO: cache
     gpx tmp;
     tmp.load(filename);
 

@@ -1,6 +1,7 @@
 #include "workoutdetails.h"
 #include "gpx.h"
 #include "qmlplotdata.h"
+#include "gpsfilter.h"
 
 #include <iostream>
 #include <memory>
@@ -61,8 +62,12 @@ void WorkoutDetailsLoader::run()
     data.maxSpeed = 0;
     data.duration = 0;
     int n = 0;
-    for(const gpx::TrackSegment& i: track)
+    GpsFilter flt;
+
+    for(const gpx::TrackSegment& trk: track)
     {
+        gpx::TrackSegment i = flt(trk);
+
         ++n;
         QGeoPositionInfo x0 = i[0];
         QDateTime t0 = x0.timestamp();

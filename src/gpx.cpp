@@ -3,41 +3,8 @@
 #include <stdexcept>
 #include <assert.h>
 #include <math.h>
+#include "geodesy.h"
 
-typedef std::tuple<double, double, double> vector3;
-
-static vector3 wgs84_to_ecef(double lat, double lon, double alt)
-{
-    double a = 6378137;
-    double e2 = 6.69437999014E-3;
-
-    double cos_lat = cos(lat * M_PI / 180);
-    double sin_lat = sin(lat * M_PI / 180);
-    double cos_lon = cos(lon * M_PI / 180);
-    double sin_lon = sin(lon * M_PI / 180);
-
-    double N = a / sqrt(1 - e2 * sin_lat * sin_lat);
-
-    return vector3{
-        (N + alt) * cos_lat * cos_lon,
-        (N + alt) * cos_lat * sin_lon,
-        (N * (1 - e2) + alt) * sin_lat
-    };
-}
-
-static vector3 wgs84_to_ecef(const QGeoCoordinate& coord)
-{
-    return wgs84_to_ecef(coord.latitude(), coord.longitude(), coord.altitude());
-}
-
-static double distance(const vector3& a, const vector3& b)
-{
-    double x = std::get<0>(a) - std::get<0>(b);
-    double y = std::get<1>(a) - std::get<1>(b);
-    double z = std::get<2>(a) - std::get<2>(b);
-
-    return sqrt(x * x + y * y + z * z);
-}
 
 void gpx::setStartDate(QDateTime t) { _start_date = t; }
 void gpx::setSport(QString s) { _sport = s; }
