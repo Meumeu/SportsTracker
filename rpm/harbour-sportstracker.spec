@@ -32,7 +32,6 @@ BuildRequires:  pkgconfig(Qt5Positioning)
 BuildRequires:  pkgconfig(Qt5Location)
 BuildRequires:  qt5-qtlocation-devel
 BuildRequires:  qt5-qtpositioning-devel
-BuildRequires:  qt5-qtdeclarative-import-positioning
 BuildRequires:  desktop-file-utils
 
 %description
@@ -75,10 +74,9 @@ desktop-file-install --delete-original       \
 %{_datadir}/%{name}/qml
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/86x86/apps/%{name}.png
-/usr/bin
-/usr/share/harbour-sportstracker
-/usr/share/applications
-/usr/share/icons/hicolor/86x86/apps
-/usr/share/harbour-sportstracker/images
+%{_datadir}/harbour-sportstracker
+%{_datadir}/applications
+%{_datadir}/icons/hicolor/86x86/apps
+%{_datadir}/harbour-sportstracker/images
 # >> files
 # << files
