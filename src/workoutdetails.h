@@ -37,8 +37,8 @@ public:
 private:
 
     QString _filename;
-    QmlPlotDataSource * _speed;
-    QmlPlotDataSource * _altitude;
+    QmlPlotDataSource * const _speed;
+    QmlPlotDataSource * const _altitude;
     Data _data;
     bool _loading;
 

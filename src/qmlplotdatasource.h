@@ -9,13 +9,12 @@ class QmlPlotDataSource : public QObject
     Q_OBJECT
 private:
     std::vector<QVector2D> _data;
-    Q_PROPERTY(std::vector<QVector2D> data READ data WRITE setData NOTIFY dataChanged)
+    Q_PROPERTY(std::vector<QVector2D> data READ data NOTIFY dataChanged)
 
 public:
     explicit QmlPlotDataSource(QObject *parent = 0);
 
     const std::vector<QVector2D>& data() const { return _data; }
-    void setData(const std::vector<QVector2D>& data);
     void setData(std::vector<QVector2D>&& data);
 
 signals:

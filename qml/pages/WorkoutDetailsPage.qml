@@ -93,7 +93,6 @@ Page {
                     anchors.fill: parent
                     onClicked: pageStack.push(Qt.resolvedUrl("WorkoutDetailsPlot.qml"), {details: details})
                 }
-
             }
 
             /*Map {

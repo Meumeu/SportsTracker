@@ -5,7 +5,8 @@ std::vector<QVector2D> QmlPlotData::_empty_data;
 
 QmlPlotData::QmlPlotData(QObject *parent) :
     QObject(parent),
-    _colour(Qt::black)
+    _colour(Qt::black),
+    _source(nullptr)
 {
 }
 

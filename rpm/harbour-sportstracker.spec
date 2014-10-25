@@ -20,18 +20,18 @@ License:    LICENSE
 URL:        http://example.org/
 Source0:    %{name}-%{version}.tar.bz2
 Source100:  harbour-sportstracker.yaml
-Requires:   qt5-qtdeclarative-import-location
-Requires:   qt5-qtdeclarative-import-positioning
-Requires:   qt5-plugin-geoservices-osm
 Requires:   sailfishsilica-qt5 >= 0.10.9
-BuildRequires:  pkgconfig(Qt5Quick)
-BuildRequires:  pkgconfig(Qt5Qml)
-BuildRequires:  pkgconfig(Qt5Core)
-BuildRequires:  pkgconfig(sailfishapp) >= 0.0.10
-BuildRequires:  pkgconfig(Qt5Positioning)
+Requires:   qt5-plugin-geoservices-osm
+Requires:   qt5-qtdeclarative-import-positioning
+Requires:   qt5-qtdeclarative-import-location
 BuildRequires:  pkgconfig(Qt5Location)
-BuildRequires:  qt5-qtlocation-devel
+BuildRequires:  pkgconfig(Qt5Positioning)
+BuildRequires:  pkgconfig(sailfishapp) >= 0.0.10
+BuildRequires:  pkgconfig(Qt5Core)
+BuildRequires:  pkgconfig(Qt5Qml)
+BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  qt5-qtpositioning-devel
+BuildRequires:  qt5-qtlocation-devel
 BuildRequires:  desktop-file-utils
 
 %description
@@ -70,13 +70,14 @@ desktop-file-install --delete-original       \
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}
-%{_datadir}/%{name}/qml
-%{_datadir}/applications/%{name}.desktop
+/usr/share/harbour-sportstracker/images
+/usr/share/icons/hicolor/86x86/apps
+/usr/share/applications
+/usr/share/harbour-sportstracker
+/usr/bin
 %{_datadir}/icons/hicolor/86x86/apps/%{name}.png
-%{_datadir}/harbour-sportstracker
-%{_datadir}/applications
-%{_datadir}/icons/hicolor/86x86/apps
-%{_datadir}/harbour-sportstracker/images
+%{_datadir}/applications/%{name}.desktop
+%{_datadir}/%{name}/qml
+%{_bindir}
 # >> files
 # << files

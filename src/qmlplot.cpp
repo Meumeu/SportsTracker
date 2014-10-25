@@ -93,6 +93,7 @@ void QmlPlot::resetAxes()
 
     for(const QmlPlotData * i: findChildren<QmlPlotData *>())
     {
+        if (!i) continue;
         for(const QVector2D& j: i->data())
         {
             _xmax = std::max(_xmax, j.x());
@@ -435,6 +436,7 @@ void QmlPlot::paint(QPainter * painter)
     painter->setClipRect(_paddingLeft, _paddingTop, w, h);
     for(const QmlPlotData * i: findChildren<QmlPlotData *>())
     {
+        if (!i) continue;
         painter->setPen(i->colour());
         std::vector<QPoint> points;
         points.reserve(i->data().size());

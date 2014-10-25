@@ -10,6 +10,17 @@ TARGET = harbour-sportstracker
 
 CONFIG += sailfishapp c++11
 
+QWEBDAVLIB_SRC = qwebdavlib/qwebdavlib/qwebdav.cpp \
+    qwebdavlib/qwebdavlib/qwebdavitem.cpp \
+    qwebdavlib/qwebdavlib/qwebdavdirparser.cpp \
+    qwebdavlib/qwebdavlib/qnaturalsort.cpp
+
+QWEBDAVLIB_HDR = qwebdavlib/qwebdavlib/qnaturalsort.h \
+    qwebdavlib/qwebdavlib/qwebdavdirparser.h \
+    qwebdavlib/qwebdavlib/qwebdav_global.h \
+    qwebdavlib/qwebdavlib/qwebdav.h \
+    qwebdavlib/qwebdavlib/qwebdavitem.h
+
 SOURCES += src/SportsTracker.cpp \
     src/workout.cpp \
     src/gpx.cpp \
@@ -25,7 +36,8 @@ SOURCES += src/SportsTracker.cpp \
     src/settings.cpp \
     src/gpxcache.cpp \
     src/gpsfilter.cpp \
-    src/geodesy.cpp
+    src/geodesy.cpp \
+    $${QWEBDAVLIB_SRC}
 
 OTHER_FILES += qml/harbour-sportstracker.qml \
     qml/cover/CoverPage.qml \
@@ -56,9 +68,10 @@ HEADERS += \
     src/qmlplotdatasource.h \
     src/settings.h \
     src/gpsfilter.h \
-    src/geodesy.h
+    src/geodesy.h \
+    $${QWEBDAVLIB_HDR}
 
-QT += positioning location
+QT += positioning location xml
 
 TRANSLATIONS = \
     translations/en.qm \
